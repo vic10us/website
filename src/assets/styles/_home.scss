@@ -402,6 +402,7 @@ $logo-colors:
     h2 {
       grid-column: inherit;
       grid-row: inherit;
+      -webkit-box-reflect: inherit;
     }
     .showcase__img__shadow {
       display: none;
