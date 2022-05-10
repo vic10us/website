@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import TypeWriterEffect from "./components/typewriter/typewriter";
-import vic10usLogo from "./assets/images/vic10us-logo-glow.svg";
 import SocialsView from "./components/socials/socials";
-// import { ReactComponent as Vic10usLogo } from "./assets/images/vic10us-logo.svg";
-import NeonButton from './components/neon-button';
+import Vic10usLogo from './components/logos/vic10us-logo';
+// import Vic10usLogo from "jsx:./assets/images/vic10us-logo.svg";
+// import LogoTwo from 'jsx:./assets/images/vic10us-logo.svg';
+// import NeonButton from './components/neon-button';
 // import RainbowCircle from "./components/rainbow-circle/rainbow-circle";
 
 class LayoutOne extends Component {
@@ -68,7 +69,8 @@ class LayoutOne extends Component {
             <h2>vic10us</h2>
             {/* <div className="showcase__img__shadow"></div> */}
             <div className="showcase__img">
-              <img src={vic10usLogo} alt="vic10us" />
+              <Vic10usLogo />
+              {/* <img src={vic10usLogo} alt="vic10us" /> */}
             </div>
             {/* <div className="img"></div> */}
             <div className="info">
