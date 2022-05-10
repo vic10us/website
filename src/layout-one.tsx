@@ -36,13 +36,13 @@ class LayoutOne extends Component {
             </label>
             <input id="nav-toggle" type="checkbox" className="nav-toggle" />
             <ul>
-              <li>
+              {/* <li>
                 <a className="nav__about" href="#about">
                   About Me
                 </a>
-              </li>
+              </li> */}
               <li>
-                <a className="nav__projects" href="#about">
+                <a className="nav__projects" href="#projects">
                   Projects
                 </a>
               </li>
@@ -90,8 +90,11 @@ class LayoutOne extends Component {
             </div>
           </div>
         </section>
-        <section id="about" className="about">
+        {/* <section id="about" className="about">
           <div className="about__container">More to come</div>
+        </section> */}
+        <section id="projects" className="projects">
+          <div className="projects__container">More to come</div>
         </section>
         <section id="socials" className="socials">
           <SocialsView />

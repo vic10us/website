@@ -5,6 +5,13 @@ export default class Vic10usLogo extends Component {
   render() {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 762.47 639.37">
+        <defs>
+          <linearGradient id="MyGradient">
+            <stop offset="5%" stopColor="#232323" />
+            <stop offset="75%" stopColor="#131313" />
+            <stop offset="95%" stopColor="#000" />
+          </linearGradient>
+        </defs>
         <g>
             <rect className="logo__red" x="159.35" y="93.51" width="205.51" height="91.41"/>
             <rect className="logo__orange" x="72.97" y="182.8" width="175.39" height="93.19"/>

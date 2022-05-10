@@ -2,8 +2,8 @@
     display: flex;
     height: 100vh;
     background-color: #000;
-    background-image: radial-gradient(50%, hsl(0, 0%, 0%), hsl(0, 0%, 15%));
-    background-image: radial-gradient(circle, hsl(0, 0%, 0%) 64%, hsl(0, 0%, 15%) 100%);
+    // background-image: radial-gradient(50%, hsl(0, 0%, 0%), hsl(0, 0%, 15%));
+    background-image: radial-gradient(circle, rgb(0, 0, 0) 0%, hsl(0, 0%, 31%) 200%);
     justify-content: center;
     align-items: center;
 }
@@ -16,4 +16,9 @@
         justify-content: space-around;
     }
 }
- 
+
+@media screen and (max-height: 500px) {
+    .socials__view {
+        padding-top: 20vh;
+    }
+}

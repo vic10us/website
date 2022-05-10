@@ -12,11 +12,8 @@ $basic-orange: #ffa500;
 $basic-pink: #ff69b4;
 $basic-hotpink: #ff1493;
 
-$logo-colors:
-  "red" $basic-red 1000ms 50px,
-  "orange" $basic-orange 50ms 50px,
-  "yellow" $basic-yellow 350ms 50px,
-  "green" $basic-green 10ms 50px,
+$logo-colors: "red" $basic-red 1000ms 50px, "orange" $basic-orange 50ms 50px,
+  "yellow" $basic-yellow 350ms 50px, "green" $basic-green 10ms 50px,
   "blue" $basic-blue 450ms 50px;
 
 .home {
@@ -65,7 +62,7 @@ $logo-colors:
   }
 
   .nav-border {
-    content: '';
+    content: "";
     position: absolute;
     background-image: $rainbow-gradient;
     background-size: 400% 400%;
@@ -89,9 +86,9 @@ $logo-colors:
     justify-content: space-between;
     align-items: center;
     user-select: none; /* Standard */
-    
+
     a {
-      color:hsla(0, 0%, 100%, 0.584);
+      color: hsla(0, 0%, 100%, 0.584);
 
       &:hover {
         color: #fff;
@@ -114,7 +111,7 @@ $logo-colors:
       }
 
       & li {
-        color:hsla(0, 0%, 100%, 0.584);
+        color: hsla(0, 0%, 100%, 0.584);
 
         &:hover {
           color: white;
@@ -145,7 +142,7 @@ $logo-colors:
       margin-right: $border-width;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         inset: -$border-width;
         animation: gradientSlide 200s linear infinite;
@@ -157,7 +154,7 @@ $logo-colors:
       }
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         inset: -$border-width;
         background-color: transparent;
@@ -228,7 +225,7 @@ $logo-colors:
     user-select: none; /* Standard */
     animation: float 6s ease-in-out infinite;
     position: absolute;
-  
+
     svg {
       overflow: inherit;
       position: relative;
@@ -242,11 +239,18 @@ $logo-colors:
         stroke-dashoffset: -1660;
         stroke-dasharray: 1660;
         animation: dash 10s linear infinite;
+        fill: url(#MyGradient);;
       }
       @each $name, $color, $offset, $spread in $logo-colors {
         .logo__#{$name} {
           @include flickerBox(logo__flicker__#{$name}, $color, $spread);
-          @include animate(logo__flicker__#{$name}, 1.5s, infinite, alternate, $offset);
+          @include animate(
+            logo__flicker__#{$name},
+            1.5s,
+            infinite,
+            alternate,
+            $offset
+          );
         }
       }
     }
@@ -280,27 +284,27 @@ $logo-colors:
 }
 
 @keyframes float {
-	0% {
-		transform: translateY(0px);
-	}
-	50% {
-		transform: translateY(-15%);
-	}
-	100% {
-		transform: translateY(0px);
-	}
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15%);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 @keyframes floatShadow {
-	0% {
-		box-shadow: 0px 2em 15px 0px rgba($black-color, 0.6);
-	}
-	50% {
-		box-shadow: 0px 2em 35px 0px rgba($black-color, 0.2);
-	}
-	100% {
-		box-shadow: 0px 2em 15px 0px rgba($black-color, 0.6);
-	}
+  0% {
+    box-shadow: 0px 2em 15px 0px rgba($black-color, 0.6);
+  }
+  50% {
+    box-shadow: 0px 2em 35px 0px rgba($black-color, 0.2);
+  }
+  100% {
+    box-shadow: 0px 2em 15px 0px rgba($black-color, 0.6);
+  }
 }
 
 .typewriter__cursor {
@@ -415,7 +419,6 @@ $logo-colors:
       &::after {
         animation: inherit;
       }
-
     }
     .info {
       grid-column: inherit;
@@ -424,18 +427,35 @@ $logo-colors:
   }
 }
 
-.about {
+.about,
+.projects {
   min-height: 100vh;
+  padding-top: 15vh;
   background-image: linear-gradient(
     -15deg,
-    rgba(245, 69, 56, 0.3),
+    hsla(4, 90%, 59%, 0.3),
     rgba(245, 245, 245, 1)
+  );
+  background: rgb(219, 219, 219);
+  background: rgb(82, 82, 82);
+  background: rgb(19, 19, 19);
+  background: linear-gradient(
+    165deg,
+    rgba(82, 82, 82, 1) 10%,
+    rgba(219, 219, 219, 1) 56%,
+    rgba(19, 19, 19, 1) 56%,
+    rgba(82, 82, 82, 1) 90%,
   );
   display: flex;
   align-items: center;
   justify-content: center;
   color: #131313;
   font-size: 4em;
+  user-select: none; /* Standard */
+}
+
+.projects__container {
+  transform: rotate(-15deg) translateY(-50%);
 }
 
 @keyframes gradient {
