@@ -66,6 +66,7 @@ class LayoutOne extends Component {
         <section className="home">
           <div className="showcase">
             <h2>vic10us</h2>
+            {/* <div className="showcase__img__shadow"></div> */}
             <div className="showcase__img">
               <img src={vic10usLogo} alt="vic10us" />
             </div>
