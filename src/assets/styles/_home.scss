@@ -239,7 +239,6 @@ $logo-colors: "red" $basic-red 1000ms 50px, "orange" $basic-orange 50ms 50px,
         stroke-dashoffset: -1660;
         stroke-dasharray: 1660;
         animation: dash 10s linear infinite;
-        fill: url(#MyGradient);;
       }
       @each $name, $color, $offset, $spread in $logo-colors {
         .logo__#{$name} {
