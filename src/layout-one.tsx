@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TypeWriterEffect from "./components/typewriter/typewriter";
 import SocialsView from "./components/socials/socials";
+import ProjectsView from "./views/projects-view";
 import Vic10usLogo from './components/logos/vic10us-logo';
 // import Vic10usLogo from "jsx:./assets/images/vic10us-logo.svg";
 // import LogoTwo from 'jsx:./assets/images/vic10us-logo.svg';
@@ -93,8 +94,11 @@ class LayoutOne extends Component {
         {/* <section id="about" className="about">
           <div className="about__container">More to come</div>
         </section> */}
-        <section id="projects" className="projects">
+        {/* <section id="projects" className="projects">
           <div className="projects__container">More to come</div>
+        </section> */}
+        <section id="projects" className="projects-view">
+          <ProjectsView />
         </section>
         <section id="socials" className="socials">
           <SocialsView />

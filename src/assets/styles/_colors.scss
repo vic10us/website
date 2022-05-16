@@ -100,13 +100,13 @@ $rainbow-gradient: linear-gradient(
 
 @function neonText($color) {
   @return 0 0 7px $color,
-      0 0 10px lighten($color, 40%),
-      0 0 21px lighten($color, 40%),
-      0 0 42px lighten($color, 10%),
-      0 0 82px lighten($color, 10%),
-      0 0 92px lighten($color, 10%),
-      0 0 102px lighten($color, 5%),
-      0 0 151px lighten($color, 5%);
+    0 0 10px lighten($color, 40%),
+    0 0 21px lighten($color, 40%),
+    0 0 42px lighten($color, 10%),
+    0 0 82px lighten($color, 10%),
+    0 0 92px lighten($color, 10%),
+    0 0 102px lighten($color, 5%),
+    0 0 151px lighten($color, 5%);
 }
 
 @function glowText($glowColor) {
