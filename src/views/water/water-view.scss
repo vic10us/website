@@ -1,0 +1,68 @@
+.water-view {
+    height: 100vh;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .clouds {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+
+        img {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            // max-width: 100%;
+            animation: clouds-animation calc(20s * var(--i)) linear infinite;
+        }
+    }
+
+    h2 {
+        position: absolute;
+        // color: white;
+        color: initial;
+        transform: translate(-50%, -50%);
+        font-size: 16em;
+    }
+    h2:nth-child(1) {
+        color: transparent;
+        -webkit-text-stroke: 2px #03a9f4;
+        text-stroke: 4px navy;
+    }
+    h2:nth-child(2) {
+        color: #03a9f4;
+        animation: animate-water 4s ease-in-out infinite;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .water-view {
+        h2 {
+            font-size: 8em;
+        }
+    }
+}
+
+@keyframes animate-water {
+    0%,100% {
+        clip-path: polygon(0 46%, 15% 41%, 30% 47%, 43% 56%, 58% 59%, 77% 57%, 90% 53%, 100% 47%, 100% 100%, 0 100%);
+    }
+    50% {
+        clip-path: polygon(0 54%, 14% 61%, 29% 63%, 42% 58%, 55% 50%, 68% 43%, 85% 41%, 100% 43%, 100% 100%, 0 100%);
+    }
+}
+
+@keyframes clouds-animation {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
