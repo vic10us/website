@@ -8,6 +8,7 @@ import cloud5 from '../../assets/images/cloud5.png';
 
 class WaterView extends Component {
     private #myRef: RefObject<HTMLElement>;
+    text: string = "Water";
 
     constructor() {
         super();
@@ -28,8 +29,7 @@ class WaterView extends Component {
                 <img src={cloud5} style={{"--i":5;}} />
             </div>
             <div ref={this.#myRef}>
-                <h2>Water</h2>
-                <h2>Water</h2>
+                {[0,1].map(i => <h2>{this.text}</h2>)}
             </div>
             </>
         );
