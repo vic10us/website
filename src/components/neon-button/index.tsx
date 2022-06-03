@@ -6,6 +6,7 @@ interface IProps {
     color: string,
     target?: string | undefined,
     label?: string | undefined,
+    onClick?: () => void,
 }
 
 interface IState {
@@ -15,24 +16,31 @@ interface IState {
 
 class NeonButton extends Component<IProps, IState> {
 
+    static defaultProps: IProps = {
+        href: "#",
+        color: "hotpink",
+        target: "_blank",
+        label: "Click Me",
+        onClick: () => {
+            //? do nothing
+        },
+    };
     constructor(props: IProps) {
         super(props);
-        this.state = {
-            target: props.target,
-            label: props.label,
-        };
-        if (props.target === "" || props.target === undefined) {
-            this.state.target = "_blank";
-        }
-        if (props.label === "" || props.label === undefined) {
-            this.state.label = "Click Me";
+    }
+
+    handleClick(e) {
+        if (this.props && this.props.onClick != undefined) {
+            this.props.onClick();
         }
     }
 
     render() {
         return (
             <div className="neon-button__container">
-                <a href={this.props.href} className={`neon-button__button btn-color-${this.props.color}`}>{this.state.label}</a>
+                <a href={this.props.href} 
+                   onClick={this.handleClick.bind(this)}
+                   className={`neon-button__button btn-color-${this.props.color}`}>{this.props.label}</a>
             </div>
         );
     }

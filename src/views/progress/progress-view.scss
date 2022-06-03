@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+
+.progress-view {
+
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    padding-top: 10vh;
+    padding-bottom: 5vh;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    gap: 5em;
+
+    .demo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex-wrap: wrap;
+        gap: 40px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .demo {
+            gap: 20px;
+        }
+    }
+
+    .neon-button__container {
+        padding-top: 1em;
+        font-size: 2em;
+    }
+
+    button {
+        display: inline-block;
+        background-color: transparent;
+        color: hsl(134, 100%, 30%);
+        font-weight: 900;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 0 10px hsl(134, 100%, 20%),
+                    0 0 40px hsl(134, 100%, 20%);
+        transition: all 0.1s linear;
+
+        &:hover {
+            color: hsl(134, 100%, 50%);
+            box-shadow: 0 0 10px hsl(134, 100%, 50%),
+                        0 0 40px hsl(134, 100%, 50%);
+        }
+    }
+}

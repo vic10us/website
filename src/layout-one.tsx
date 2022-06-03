@@ -3,6 +3,7 @@ import TypeWriterEffect from "./components/typewriter/typewriter";
 import SocialsView from "./components/socials/socials";
 import ProjectsView from "./views/projects";
 import WaterView from "./views/water";
+import ProgressView from "./views/progress";
 import Vic10usLogo from './components/logos/vic10us-logo';
 // import Vic10usLogo from "jsx:./assets/images/vic10us-logo.svg";
 // import LogoTwo from 'jsx:./assets/images/vic10us-logo.svg';
@@ -102,7 +103,10 @@ class LayoutOne extends Component {
           <ProjectsView />
         </section>
         <section id="water" className="water-view">
-          <WaterView />
+          <WaterView text="Water!" color="hsl(199, 100%, 50%)" />
+        </section>
+        <section id="progress" className="progress-view">
+          <ProgressView />
         </section>
         <section id="socials" className="socials">
           <SocialsView />
