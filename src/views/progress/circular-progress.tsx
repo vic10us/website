@@ -89,8 +89,12 @@ class CircularProgress extends Component<IProps, IState> {
                                     <stop offset="100%" stopColor="rgba(0, 0, 0, 0.2)" />
                                 </radialGradient>
                             </defs>
-                            <circle className="circle1" cx={this.props.size} cy={this.props.size} r={this.props.size}></circle>
-                            <circle className="circle2" 
+                            <circle className="circle1"
+                                cx={this.props.size} 
+                                cy={this.props.size} 
+                                r={this.props.size}>
+                            </circle>
+                            <circle className="circle2"
                                 cx={this.props.size}
                                 cy={this.props.size}
                                 r={this.props.size}

@@ -56,18 +56,20 @@
       z-index: 10;
       transform: rotate(calc(3.6deg * var(--percent)));
       animation: animateDot 1s linear forwards;
+      $animationSpeed: 3s;
 
       &::before {
         content: "";
         position: absolute;
-        top: -5px;
+        top: calc(var(--size) / -6 / 2);
         left: 50%;
         transform: translateX(-50%);
-        width: 10px;
-        height: 10px;
+        width: calc(var(--size) / 4);
+        height: calc(var(--size) / 6);
         border-radius: 50%;
         background: var(--clr);
         box-shadow: 0 0 10px var(--clr), 0 0 30px var(--clr);
+        animation: animateDotBackground $animationSpeed infinite alternate;
       }
 
       &::after {
@@ -78,11 +80,29 @@
         width: 100%;
         height: 100%;
         border-radius: 50%;
-        opacity: 0.4;
+        opacity: 0;
         box-shadow: 
             0 0 5px var(--clr),
             0 0 10px var(--clr),
             0 0 50px var(--clr);
+        animation: animateBackground $animationSpeed infinite alternate;
+      }
+    }
+    @keyframes animateDotBackground {
+      0% {
+        box-shadow: 0 0 10px var(--clr), 0 0 30px var(--clr);
+      }
+      100% {
+        box-shadow: none;
+      }
+    }
+
+    @keyframes animateBackground {
+      0% {
+        opacity: 0.4;
+      }
+      100% {
+        opacity: 0.1;
       }
     }
 

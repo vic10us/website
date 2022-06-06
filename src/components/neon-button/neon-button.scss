@@ -23,6 +23,8 @@ $neon-colors: (
   $neon-color: $neon-default;
   $neon-bg-color: darken($neon-color, 90%);
   font-weight: 700;
+  text-transform: uppercase;
+  // letter-spacing: 0.25em;
 
   font-style: normal;
 
@@ -35,9 +37,11 @@ $neon-colors: (
     color: $neon-color;
     border: $neon-color 0.125em solid;
 
-    text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em $neon-color;
+    // text-shadow: 
+    //     0 0 0.5em $neon-color, 
+    //     0 0 1em $neon-color;
 
-    box-shadow: inset 0 0 0.5em 0.15em $neon-color, 0 0 0.5em 0.15em $neon-color;
+    // box-shadow: inset 0 0 0.5em 0.15em $neon-color, 0 0 0.5em 0.15em $neon-color;
 
     border-radius: 100px;
     position: relative;
@@ -85,9 +89,10 @@ $neon-colors: (
 
     @each $name, $color in $neon-colors {
       &.btn-color-#{$name} {
-        color: $color;
         border: $color 0.125em solid;
-        text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em $color;
+        transition: all 200ms linear;
+        text-shadow: 0 0 0.5em $color, 0 0 1em $color;
+        color: $color;
 
         box-shadow: inset 0 0 0.5em 0.15em $color, 0 0 0.5em 0.15em $color;
         &::before {
@@ -95,7 +100,11 @@ $neon-colors: (
         }
         &:hover,
         &:focus {
-          color: $neon-bg-color;
+          color: darken($color, 50%);
+          letter-spacing: 0.25em;
+          background-color: $color;
+          // text-shadow: 0 0 0.5em $color, 0 0 1em $color;
+          // color: darken($color, 50%);
         }
         &::after {
           z-index: -1;
