@@ -11,12 +11,55 @@ import Vic10usLogo from './components/logos/vic10us-logo';
 // import RainbowCircle from "./components/rainbow-circle/rainbow-circle";
 
 class LayoutOne extends Component {
+  
+  private #myRef: RefObject<HTMLElement>;
+  private #navSocials: RefObject<HTMLElement>;
 
   texts: string[] = [
     "Engineer^250.^250.^250.^250",
     "Streamer^250.^250.^250.",
     "DIY-er^250.^250.^250.",
   ];
+
+  constructor() {
+    super();
+    this.#myRef = React.createRef();
+    this.#navSocials = React.createRef();
+  }
+
+  doRipple = (e: MouseEvent, element: HTMLElement) => {
+    if(e.target != element) {
+        return;
+    }
+    const circle = document.createElement("span");
+    console.log(element);
+    const rect = element.getBoundingClientRect();
+    element.style.isolation = "isolate";
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
+    circle.style.position = "absolute";
+    circle.style.zIndex = "-10";
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - (element.offsetLeft + radius)}px`;
+    circle.style.top = `${e.clientY - (element.offsetTop + radius)}px`;
+    circle.classList.add("pulse");
+    element.appendChild(circle);
+    circle.addEventListener('animationend', () => {
+      // element.removeChild(circle);
+    });
+  };
+
+  addRipple(element: HTMLElement) {
+    element.addEventListener('click', (e) => {
+      this.doRipple(e, element);
+    });
+  }
+
+  componentDidMount() {
+    // const element: HTMLElement = this.#myRef.current;
+    this.addRipple(this.#myRef.current as HTMLElement);
+    this.addRipple(this.#navSocials.current as HTMLElement);
+  }
 
   openMenu = () => {
     // do something eventually
@@ -45,7 +88,7 @@ class LayoutOne extends Component {
                 </a>
               </li> */}
               <li>
-                <a className="nav__projects" href="#projects">
+                <a ref={this.#myRef} className="nav__projects" href="#projects">
                   Projects
                 </a>
               </li>
@@ -60,7 +103,7 @@ class LayoutOne extends Component {
                 <NeonButton label="Socials" color="blue" href="#socials" />
               </li> */}
               <li>
-                <a className="nav__socials" href="#socials">
+                <a ref={this.#navSocials} className="nav__socials" href="#socials">
                   Socials
                 </a>
               </li>

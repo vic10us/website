@@ -130,6 +130,36 @@ $logo-colors: "red" $basic-red 1000ms 50px, "orange" $basic-orange 50ms 50px,
       -webkit-text-fill-color: transparent;
     }
 
+    .nav__projects {
+      display: inline-grid;
+      position: relative;
+      isolation: isolate;
+      place-items: center;
+      overflow: hidden;
+      padding: 1em 2em;
+      border-radius: 0.5em;
+    }
+
+    .pulse {
+      content: "";
+      aspect-ratio: 1 / 1;
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      width: 100%;
+      // z-index: -1;
+      opacity: 0.5;
+      transform: scale(0);
+      animation: pulse 600ms linear;
+    }
+
+    @keyframes pulse {
+      100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
     .nav__socials {
       $border-width: 2px;
       position: relative;
