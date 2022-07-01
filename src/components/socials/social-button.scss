@@ -11,6 +11,7 @@ $youtube-color: hsl(0, 100%, 50%);
 $pinterest-color: hsl(0, 100%, 50%);
 $bitbucket-color: hsl(0, 100%, 50%);
 $deviantart-color: hsl(0, 100%, 50%);
+$instructables-color: hsl(45, 97%, 54%);
 $white: hsl(0, 0%, 100%);
 
 @function glowText($glowColor) {
@@ -88,6 +89,11 @@ $white: hsl(0, 0%, 100%);
   &.deviantart {
     text-shadow: glowText(
       color.scale($deviantart-color, $lightness: $label-lightness)
+    );
+  }
+  &.instructables {
+    text-shadow: glowText(
+      color.scale($instructables-color, $lightness: $label-lightness)
     );
   }
 }
@@ -171,6 +177,9 @@ $white: hsl(0, 0%, 100%);
   .fa-facebook-f {
     text-shadow: glowText($facebook-color);
   }
+  .fa-instructables {
+    text-shadow: glowText($instructables-color);
+  }
   &.github span {
     box-shadow: 0 0 0.1em 0 $github-color;
   }
@@ -194,6 +203,9 @@ $white: hsl(0, 0%, 100%);
   }
   &.facebook-f span {
     box-shadow: 0 0 0.1em 0 $facebook-color;
+  }
+  &.instructables span {
+    box-shadow: 0 0 0.1em 0 $instructables-color;
   }
   &.github:hover span {
     box-shadow: -1px 1px 5px 4px $github-color !important;
@@ -226,5 +238,9 @@ $white: hsl(0, 0%, 100%);
   &.facebook-f:hover span {
     box-shadow: -1px 1px 5px 4px $facebook-color !important;
     background: fade-out($facebook-color, $layer-fade) !important;
+  }
+  &.instructables:hover span {
+    box-shadow: -1px 1px 5px 4px $instructables-color !important;
+    background: fade-out($instructables-color, $layer-fade) !important;
   }
 }
