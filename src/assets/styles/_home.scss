@@ -11,10 +11,19 @@ $basic-purple: #ff00ff;
 $basic-orange: #ffa500;
 $basic-pink: #ff69b4;
 $basic-hotpink: #ff1493;
+$blue-1: #3100FF;
+$blue-2: #1F00A0;
+$blue-3: #100051;
 
-$logo-colors: "red" $basic-red 1000ms 50px, "orange" $basic-orange 50ms 50px,
-  "yellow" $basic-yellow 350ms 50px, "green" $basic-green 10ms 50px,
-  "blue" $basic-blue 450ms 50px;
+$logo-colors: 
+  "red" $basic-red 1000ms 50px, 
+  "orange" $basic-orange 50ms 50px,
+  "yellow" $basic-yellow 350ms 50px, 
+  "green" $basic-green 10ms 50px,
+  "blue" $basic-blue 450ms 50px,
+  "blue1" $blue-1 350ms 50px,
+  "blue2" $blue-2 10ms 50px,
+  "blue3" $blue-3 450ms 50px;
 
 .home {
   content: "";

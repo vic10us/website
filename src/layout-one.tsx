@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, RefObject } from "react";
 import TypeWriterEffect from "./components/typewriter/typewriter";
 import SocialsView from "./components/socials/socials";
 import ProjectsView from "./views/projects";
@@ -12,8 +12,8 @@ import Vic10usLogo from './components/logos/vic10us-logo';
 
 class LayoutOne extends Component {
   
-  private #myRef: RefObject<HTMLElement>;
-  private #navSocials: RefObject<HTMLElement>;
+  private myRef: RefObject<HTMLAnchorElement>;
+  private navSocials: RefObject<HTMLAnchorElement>;
 
   texts: string[] = [
     "Engineer^250.^250.^250.^250",
@@ -21,10 +21,10 @@ class LayoutOne extends Component {
     "DIY-er^250.^250.^250.",
   ];
 
-  constructor() {
-    super();
-    this.#myRef = React.createRef();
-    this.#navSocials = React.createRef();
+  constructor(props: any) {
+    super(props);
+    this.myRef = React.createRef();
+    this.navSocials = React.createRef();
   }
 
   doRipple = (e: MouseEvent, element: HTMLElement) => {
@@ -57,8 +57,8 @@ class LayoutOne extends Component {
 
   componentDidMount() {
     // const element: HTMLElement = this.#myRef.current;
-    this.addRipple(this.#myRef.current as HTMLElement);
-    this.addRipple(this.#navSocials.current as HTMLElement);
+    this.addRipple(this.myRef.current as HTMLElement);
+    this.addRipple(this.navSocials.current as HTMLElement);
   }
 
   openMenu = () => {
@@ -88,7 +88,7 @@ class LayoutOne extends Component {
                 </a>
               </li> */}
               <li>
-                <a ref={this.#myRef} className="nav__projects" href="#projects">
+                <a ref={this.myRef} className="nav__projects" href="#projects">
                   Projects
                 </a>
               </li>
@@ -103,7 +103,7 @@ class LayoutOne extends Component {
                 <NeonButton label="Socials" color="blue" href="#socials" />
               </li> */}
               <li>
-                <a ref={this.#navSocials} className="nav__socials" href="#socials">
+                <a ref={this.navSocials} className="nav__socials" href="#socials">
                   Socials
                 </a>
               </li>
@@ -126,7 +126,7 @@ class LayoutOne extends Component {
                   prompt="> "
                   texts={this.texts}
                   cursor="▋"
-                  loop="true"
+                  loop={true}
                 />
               </h3>
               <p>

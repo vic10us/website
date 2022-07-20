@@ -3,22 +3,22 @@
     <defs>
         <style>
             .logo__yellow{
-                fill:#f2d901;
+                fill:#3100FF;
             }
             .logo__blue{
-                fill:#246cd8;
+                fill:#100051;
             }
             .logo__orange{
-                fill:#f58500;
+                fill:#1F00A0;
             }
             .logo__red{
-                fill:#f70000;
+                fill:#100051;
             }
             .logo__green{
-                fill:#4abc1f;
+                fill:#1F00A0;
             }
             .logo__main {
-            fill: black;
+                fill: white;
             }
         </style>
     </defs>
