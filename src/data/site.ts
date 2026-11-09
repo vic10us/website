@@ -16,12 +16,25 @@ export type Project = {
   blurb: string;
   tags: string[];
   url: string;
+  /** live site, shown as a "site" link */
+  site?: string;
+  /** source isn't public: hide the "source" link */
+  closed?: boolean;
   demo?: string;
   image?: string;
   stars?: number;
 };
 
 export const featured: Project[] = [
+  {
+    slug: "parley",
+    name: "Parley",
+    blurb:
+      "Open-source Discord alternative with no paywall: servers, channels, DMs, voice, video, stages and a recording studio. Every feature free, on runparley.com or your own server.",
+    tags: ["Rust", "React", "WebRTC", "Apache-2.0"],
+    url: "https://github.com/ParleyDev/parley",
+    site: "https://runparley.com",
+  },
   {
     slug: "glass-button",
     name: "glass-button",
@@ -30,6 +43,16 @@ export const featured: Project[] = [
     tags: ["TypeScript", "WebGL2", "npm"],
     url: "https://github.com/vic10us/glass-button",
     demo: "https://vic10us.github.io/glass-button/",
+  },
+  {
+    slug: "rock-atlas",
+    name: "Rock Atlas",
+    blurb:
+      "An open, data-driven encyclopedia of recorded rock: 1,000 ranked entries across eras, subgenres and countries, built from Wikipedia, Wikidata, MusicBrainz and Last.fm.",
+    tags: ["Astro", "data pipeline", "Wikidata"],
+    url: "https://rock-atlas.com",
+    site: "https://rock-atlas.com",
+    closed: true,
   },
   {
     slug: "amass-conductor",

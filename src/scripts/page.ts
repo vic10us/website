@@ -206,7 +206,7 @@ const cmds: Record<string, (a: string[]) => void> = {
     const dir = a.find((x) => !x.startsWith("-")) || "~";
     if (/lab\/?$/.test(dir)) print("deprecated/  old-components/" + (all ? "  .white-rabbit  .hangar/" : ""));
     else if (/hangar/.test(dir)) cmds.cd(["hangar"]);
-    else if (/projects/.test(dir)) print("glass-button/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
+    else if (/projects/.test(dir)) print("parley/  glass-button/  rock-atlas/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
     else print("projects/  prints.log  streaming/  lab/" + (all ? "  .plan  .contact  .achievements" : ""));
   },
   cat: (a) => {

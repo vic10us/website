@@ -15,18 +15,19 @@ const hasMedia = !!image || live;
 ---
 <article class:list={["row", { flip, bare: !hasMedia }]} data-slug={p.slug}>
   <div class="text">
-    <h3><a href={p.url} rel="noopener">{p.name}</a></h3>
+    <h3><a href={p.site ?? p.url} rel="noopener">{p.name}</a></h3>
     <p>{p.blurb}</p>
     <div class="meta">
       {p.tags.join(" · ")}{p.stars ? ` · ★${p.stars}` : ""}
-      {" · "}<a href={p.url} rel="noopener">source</a>
+      {p.site && <> · <a href={p.site} rel="noopener">site</a></>}
+      {p.closed ? " · closed source" : <> · <a href={p.url} rel="noopener">source</a></>}
       {p.demo && <> · <a href={p.demo} rel="noopener">demo</a></>}
     </div>
   </div>
   {hasMedia && (
     <div class="media">
       {image ? (
-        <a class="pop" href={p.demo ?? p.url} rel="noopener" tabindex="-1" aria-hidden="true">
+        <a class="pop" href={p.demo ?? p.site ?? p.url} rel="noopener" tabindex="-1" aria-hidden="true">
           <Image src={image} alt={alt} widths={[560, 900, 1200]} sizes="(max-width: 760px) 100vw, 560px" />
         </a>
       ) : (
