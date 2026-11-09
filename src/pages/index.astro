@@ -3,13 +3,14 @@ import Base from "../layouts/Base.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import FeatureRow from "../components/FeatureRow.astro";
 import Deprecated from "../components/Deprecated.astro";
+import ComponentShowcase from "../components/ComponentShowcase.astro";
 import { shots } from "../data/shots";
 import Shell from "../components/Shell.astro";
-import { featured, streaming, printProfiles, oldComponents, socials, prompt, host, bootLines, taglines } from "../data/site";
+import { products, components, streaming, printProfiles, oldComponents, socials, prompt, host, bootLines, taglines } from "../data/site";
 ---
 <Base>
   <nav class="top" aria-label="sections">
-    <a href="#work">work</a><a href="#prints">prints</a><a href="#streaming">streaming</a><a href="#lab">lab</a><a href="#deprecated">deprecated</a><a href="#socials">socials</a>
+    <a href="#work">projects</a><a href="#components">components</a><a href="#prints">prints</a><a href="#streaming">streaming</a><a href="#lab">lab</a><a href="#deprecated">deprecated</a><a href="#socials">socials</a>
     <span class="host">{host}</span>
   </nav>
 
@@ -28,14 +29,15 @@ import { featured, streaming, printProfiles, oldComponents, socials, prompt, hos
     <section id="work">
       <h2 class="ps" data-prompt={prompt}>ls ~/projects --featured</h2>
       <div class="rows" id="cards">
-        {featured.map((p, i) => (
-          <FeatureRow project={p} image={shots[p.slug]?.src} alt={shots[p.slug]?.alt} flip={i % 2 === 1} live={p.slug === "glass-button"}>
-            {p.slug === "glass-button" && (
-              <glass-button id="gb" effect="fire" status="healthy" icon="none">Launch demo →</glass-button>
-            )}
-          </FeatureRow>
+        {products.map((p, i) => (
+          <FeatureRow project={p} image={shots[p.slug]?.src} alt={shots[p.slug]?.alt} flip={i % 2 === 1} />
         ))}
       </div>
+    </section>
+
+    <section id="components">
+      <h2 class="ps" data-prompt={prompt}>ls ~/components</h2>
+      {components.map((c) => <ComponentShowcase project={c} pkg="@vic10us/glass-button" />)}
     </section>
 
     <section id="prints">
@@ -121,13 +123,6 @@ import { featured, streaming, printProfiles, oldComponents, socials, prompt, hos
   .rows { display: flex; flex-direction: column; gap: 34px; }
   .grid.two { grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr)); }
 
-  .stage {
-    height: 150px; margin: 0 0 12px; border: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(80% 90% at 50% 120%, #2a1206, #050706);
-    overflow: visible;
-  }
-  glass-button { font-size: 15px; }
 
   .profiles { display: flex; gap: 14px; flex-wrap: wrap; }
   .profile {

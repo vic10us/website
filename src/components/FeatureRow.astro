@@ -8,10 +8,9 @@ interface Props {
   image?: ImageMetadata;
   alt?: string;
   flip?: boolean;
-  live?: boolean;
 }
-const { project: p, image, alt = "", flip = false, live = false } = Astro.props;
-const hasMedia = !!image || live;
+const { project: p, image, alt = "", flip = false } = Astro.props;
+const hasMedia = !!image;
 ---
 <article class:list={["row", { flip, bare: !hasMedia }]} data-slug={p.slug}>
   <div class="text">
@@ -26,13 +25,9 @@ const hasMedia = !!image || live;
   </div>
   {hasMedia && (
     <div class="media">
-      {image ? (
-        <a class="pop" href={p.demo ?? p.site ?? p.url} rel="noopener" tabindex="-1" aria-hidden="true">
-          <Image src={image} alt={alt} widths={[560, 900, 1200]} sizes="(max-width: 760px) 100vw, 560px" />
-        </a>
-      ) : (
-        <div class="stage"><slot /></div>
-      )}
+      <a class="pop" href={p.demo ?? p.site ?? p.url} rel="noopener" tabindex="-1" aria-hidden="true">
+        <Image src={image!} alt={alt} widths={[560, 900, 1200]} sizes="(max-width: 760px) 100vw, 560px" />
+      </a>
     </div>
   )}
 </article>
@@ -63,11 +58,6 @@ const hasMedia = !!image || live;
   .meta a { color: var(--dim); }
 
   .media { perspective: 1100px; position: relative; }
-  .stage {
-    height: 170px; border: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(80% 90% at 50% 120%, #08200f, #050706);
-  }
 
   /* 3D pop-out: the screenshot leans out past the card edge */
   .pop {

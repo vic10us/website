@@ -25,7 +25,7 @@ export type Project = {
   stars?: number;
 };
 
-export const featured: Project[] = [
+export const products: Project[] = [
   {
     slug: "parley",
     name: "Parley",
@@ -34,15 +34,6 @@ export const featured: Project[] = [
     tags: ["Rust", "React", "WebRTC", "Apache-2.0"],
     url: "https://github.com/ParleyDev/parley",
     site: "https://runparley.com",
-  },
-  {
-    slug: "glass-button",
-    name: "glass-button",
-    blurb:
-      "Framework-agnostic web component: a thick, dark glass pill with real-time WebGL2 fire or water living inside it. Zero dependencies.",
-    tags: ["TypeScript", "WebGL2", "npm"],
-    url: "https://github.com/vic10us/glass-button",
-    demo: "https://vic10us.github.io/glass-button/",
   },
   {
     slug: "rock-atlas",
@@ -78,6 +69,19 @@ export const featured: Project[] = [
     tags: ["CAD", "3D printing"],
     url: "https://github.com/vic10us/Stealthburner_CR10_Assembly",
     stars: 15,
+  },
+];
+
+// Maintained, published components. (Older ones live in oldComponents.)
+export const components: Project[] = [
+  {
+    slug: "glass-button",
+    name: "glass-button",
+    blurb:
+      "Framework-agnostic web component: a thick, dark glass pill with real-time WebGL2 fire or water living inside it. Zero dependencies.",
+    tags: ["TypeScript", "WebGL2", "npm"],
+    url: "https://github.com/vic10us/glass-button",
+    demo: "https://vic10us.github.io/glass-button/",
   },
 ];
 

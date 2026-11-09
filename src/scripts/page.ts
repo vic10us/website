@@ -129,11 +129,6 @@ function wake() {
   award("wake-up");
 }
 
-/* ---------- glass-button opens its demo ---------- */
-document.getElementById("gb")?.addEventListener("click", () => {
-  window.open("https://vic10us.github.io/glass-button/", "_blank", "noopener");
-});
-
 /* ---------- shell ---------- */
 const shell = $("#shell");
 const out = $("#out");
@@ -169,7 +164,7 @@ const snark = (plain: string, mid: string, high: string) => (humor < 35 ? plain 
 const goTo = (id: string) => { closeShell(); document.getElementById(id)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); };
 
 const ghostHistory = ["ls -a ~/lab", "cat ~/lab/.white-rabbit", "whisper mode", "tars --humor 75", "roll out", "turbo boost", "cat .achievements"];
-const SECTIONS = ["work", "prints", "streaming", "lab", "deprecated", "socials"];
+const SECTIONS = ["work", "components", "prints", "streaming", "lab", "deprecated", "socials"];
 const FILES: Record<string, () => void> = {
   ".white-rabbit": () => { print("follow me."); award("white-rabbit"); setTimeout(() => rain(), 700); },
   ".plan": () => print("1. build things\n2. help others build things\n3. ???\n4. print another filament holder"),
@@ -206,8 +201,10 @@ const cmds: Record<string, (a: string[]) => void> = {
     const dir = a.find((x) => !x.startsWith("-")) || "~";
     if (/lab\/?$/.test(dir)) print("deprecated/  old-components/" + (all ? "  .white-rabbit  .hangar/" : ""));
     else if (/hangar/.test(dir)) cmds.cd(["hangar"]);
-    else if (/projects/.test(dir)) print("parley/  glass-button/  rock-atlas/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
-    else print("projects/  prints.log  streaming/  lab/" + (all ? "  .plan  .contact  .achievements" : ""));
+    else if (/projects/.test(dir)) print("parley/  rock-atlas/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
+    else if (/^(~\/)?components\/?$/.test(dir)) print("glass-button/");
+    else if (/old-components/.test(dir)) print("terminal-text  paper-search-input  cc-form  stripe-form  progress-check-mark  profile-card");
+    else print("projects/  components/  prints.log  streaming/  lab/" + (all ? "  .plan  .contact  .achievements" : ""));
   },
   cat: (a) => {
     const f = (a[0] || "").replace(/^(~\/)?(lab\/)?/, "");
