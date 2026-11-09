@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# nothing to see here. (press ` though.)

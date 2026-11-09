@@ -1,0 +1,158 @@
+---
+import { Image } from "astro:assets";
+import { prompt } from "../data/site";
+import c1 from "../assets/clouds/cloud1.png";
+import c2 from "../assets/clouds/cloud2.png";
+import c3 from "../assets/clouds/cloud3.png";
+import c4 from "../assets/clouds/cloud4.png";
+import c5 from "../assets/clouds/cloud5.png";
+const clouds = [c1, c2, c3, c4, c5];
+const gauges = [
+  { id: "html", label: "html", color: "#04fc43" },
+  { id: "css", label: "css", color: "#fee800" },
+  { id: "js", label: "javascript", color: "#ff00be" },
+];
+const R = 52;
+const C = 2 * Math.PI * R;
+---
+<section id="deprecated">
+  <h2 class="ps" data-prompt={prompt}>systemctl status legacy-demos</h2>
+  <pre class="status" aria-label="legacy demos status: failed, bitrot"><span class="red">●</span> legacy-demos.service - Component Playground (2022–2024)
+     Loaded: loaded (/home/vic10us/lab/deprecated; <span class="red">abandoned</span>)
+     Active: <span class="red">failed (Result: bitrot)</span> since forever
+    Process: still twitching. poke them anyway.</pre>
+
+  <div class="demos">
+    <figure class="demo hex" id="hex">
+      <div class="glowdot" aria-hidden="true"></div>
+      <div class="hexes" aria-hidden="true">
+        {Array.from({ length: 8 }, (_, r) => (
+          <div class="row">{Array.from({ length: 14 }, () => <div class="h"></div>)}</div>
+        ))}
+      </div>
+      <figcaption>hex-grid.tsx <span>† 2023</span></figcaption>
+    </figure>
+
+    <figure class="demo water">
+      <div class="clouds" aria-hidden="true">
+        {clouds.map((c, i) => <Image src={c} alt="" width={900} loading="lazy" style={`--i:${i + 1}`} />)}
+      </div>
+      <div class="wtext" aria-hidden="true"><span>Water!</span><span>Water!</span></div>
+      <figcaption>water-view.tsx <span>† 2023</span></figcaption>
+    </figure>
+
+    <figure class="demo gauges">
+      <div class="ring-row">
+        {gauges.map((g) => (
+          <div class="ring" style={`--clr:${g.color}`} data-gauge>
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="track" cx="60" cy="60" r={R} />
+              <circle class="bar" cx="60" cy="60" r={R} stroke-dasharray={C} stroke-dashoffset={C} />
+            </svg>
+            <div class="num"><b>0</b><small>%</small><span>{g.label}</span></div>
+          </div>
+        ))}
+      </div>
+      <button type="button" id="randomize">randomize</button>
+      <figcaption>circular-progress.tsx <span>† 2023</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<script>
+  // hex grid: glow follows the pointer
+  const hex = document.getElementById("hex")!;
+  const dot = hex.querySelector<HTMLElement>(".glowdot")!;
+  hex.addEventListener("pointermove", (e) => {
+    const r = hex.getBoundingClientRect();
+    dot.style.left = `${e.clientX - r.left}px`;
+    dot.style.top = `${e.clientY - r.top}px`;
+  });
+
+  // gauges: animate to random values
+  const C = 2 * Math.PI * 52;
+  const rings = [...document.querySelectorAll<HTMLElement>("[data-gauge]")];
+  const vals = rings.map(() => 0);
+  function randomize() {
+    rings.forEach((ring, i) => {
+      const to = Math.trunc(Math.random() * 100);
+      const from = vals[i];
+      vals[i] = to;
+      ring.querySelector<SVGCircleElement>(".bar")!.style.strokeDashoffset = String(C * (1 - to / 100));
+      const b = ring.querySelector("b")!;
+      const t0 = performance.now();
+      const step = (t: number) => {
+        const k = Math.min(1, (t - t0) / 900);
+        b.textContent = String(Math.round(from + (to - from) * k));
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+  document.getElementById("randomize")!.addEventListener("click", randomize);
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { randomize(); o.disconnect(); } }).observe(rings[0]);
+</script>
+
+<style>
+  .status { margin: 0 0 18px; font: 13px/1.6 var(--mono); color: var(--dim); white-space: pre-wrap; }
+  .red { color: var(--err); }
+  .demos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 14px; }
+  .demo {
+    margin: 0; position: relative; height: 240px; overflow: hidden; background: #000;
+    border: 1px dashed #4d1f1f; filter: saturate(0.85);
+  }
+  .demo:hover { filter: none; border-color: var(--err); }
+  figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 4px 10px; font-size: 11px;
+    background: rgba(0, 0, 0, 0.75); color: var(--dim); display: flex; justify-content: space-between;
+  }
+  figcaption span { color: var(--err); opacity: 0.8; }
+
+  /* hex grid */
+  .hex { animation: hue 4s linear infinite; cursor: crosshair; }
+  @keyframes hue { to { filter: hue-rotate(360deg); } }
+  .glowdot {
+    position: absolute; width: 360px; height: 360px; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 60%); pointer-events: none;
+  }
+  .hexes { position: relative; margin: -14px 0 0 -24px; }
+  .row { display: flex; margin-top: -14px; }
+  .row:nth-child(even) { margin-left: 25px; }
+  .h { flex: 0 0 50px; height: 56px; margin: 0.5px; position: relative; }
+  .h::before {
+    content: ""; position: absolute; inset: 0; transition: 1.5s;
+    background: radial-gradient(circle, #000 30%, rgba(0, 0, 0, 0.1) 100%);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .h:hover::before { transition: 0s; background: radial-gradient(circle, #00f 0%, #f00 100%); }
+
+  /* water */
+  .water { display: flex; align-items: center; justify-content: center; }
+  .clouds img { position: absolute; left: 0; bottom: 0; height: auto; max-width: none; width: 600px; animation: drift calc(20s * var(--i)) linear infinite; opacity: 0.8; }
+  @keyframes drift { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  .wtext { position: relative; font: 700 72px/1 system-ui, sans-serif; }
+  .wtext span { display: block; white-space: nowrap; }
+  .wtext span:first-child { color: hsl(199 100% 6%); -webkit-text-stroke: 2px hsl(199 100% 50%); }
+  .wtext span:last-child { position: absolute; inset: 0; color: hsl(199 100% 50%); animation: wave 4s ease-in-out infinite; }
+  @keyframes wave {
+    0%, 100% { clip-path: polygon(0 46%, 15% 41%, 30% 47%, 43% 56%, 58% 59%, 77% 57%, 90% 53%, 100% 47%, 100% 100%, 0 100%); }
+    50% { clip-path: polygon(0 54%, 14% 61%, 29% 63%, 42% 58%, 55% 50%, 68% 43%, 85% 41%, 100% 43%, 100% 100%, 0 100%); }
+  }
+
+  /* gauges */
+  .gauges { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding-bottom: 20px; }
+  .ring-row { display: flex; gap: 10px; }
+  .ring { position: relative; width: 86px; height: 86px; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring circle { fill: hsla(0, 0%, 50%, 0.08); stroke-width: 5; }
+  .ring .track { stroke: var(--clr); stroke-opacity: 0.15; }
+  .ring .bar { fill: none; stroke: var(--clr); stroke-linecap: round; filter: drop-shadow(0 0 4px var(--clr)); transition: stroke-dashoffset 0.9s ease; }
+  .num { position: absolute; inset: 0; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; color: #fff; font: 700 20px system-ui, sans-serif; }
+  .num small { font-weight: 300; font-size: 11px; margin-top: 4px; }
+  .num span { flex-basis: 100%; text-align: center; font: 9px var(--mono); letter-spacing: 1px; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+  #randomize {
+    font: 12px var(--mono); color: hotpink; background: transparent; border: 1px solid hotpink; padding: 4px 14px; cursor: pointer;
+    box-shadow: 0 0 10px #ff69b455, inset 0 0 8px #ff69b433;
+  }
+  #randomize:hover { background: hotpink; color: #000; }
+</style>

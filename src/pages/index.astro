@@ -1,0 +1,150 @@
+---
+import Base from "../layouts/Base.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import FeatureRow from "../components/FeatureRow.astro";
+import Deprecated from "../components/Deprecated.astro";
+import ComponentShowcase from "../components/ComponentShowcase.astro";
+import { shots } from "../data/shots";
+import Shell from "../components/Shell.astro";
+import { products, components, streaming, printProfiles, oldComponents, socials, prompt, host, bootLines, taglines } from "../data/site";
+---
+<Base>
+  <nav class="top" aria-label="sections">
+    <a href="#work">projects</a><a href="#components">components</a><a href="#prints">prints</a><a href="#streaming">streaming</a><a href="#lab">lab</a><a href="#deprecated">deprecated</a><a href="#socials">socials</a>
+    <span class="host">{host}</span>
+  </nav>
+
+  <main class="wrap" id="page">
+    <header class="hero">
+      <pre class="boot" id="boot" data-lines={JSON.stringify(bootLines)} aria-hidden="true"></pre>
+      <h1>vic10us</h1>
+      <p class="tag" aria-label={taglines.join(", ")}>
+        <span id="typed" data-words={JSON.stringify(taglines)} aria-hidden="true">&gt; {taglines[0]}</span><span class="cur blink" id="cursor" aria-hidden="true"></span>
+      </p>
+      <p class="intro">
+        Quasi-polyglot, jack of all trades. Builds things with tech, but mostly tries to help others build their own.
+      </p>
+    </header>
+
+    <section id="work">
+      <h2 class="ps" data-prompt={prompt}>ls ~/projects --featured</h2>
+      <div class="rows" id="cards">
+        {products.map((p, i) => (
+          <FeatureRow project={p} image={shots[p.slug]?.src} alt={shots[p.slug]?.alt} flip={i % 2 === 1} />
+        ))}
+      </div>
+    </section>
+
+    <section id="components">
+      <h2 class="ps" data-prompt={prompt}>ls ~/components</h2>
+      {components.map((c) => <ComponentShowcase project={c} pkg="@vic10us/glass-button" />)}
+    </section>
+
+    <section id="prints">
+      <h2 class="ps" data-prompt={prompt}>cat ~/prints.log | tail</h2>
+      <p class="note">Models I've designed and published. Things that hold things, fix things, or make printers better.</p>
+      <div class="profiles">
+        {printProfiles.map((p) => (
+          <a class="profile" href={p.url} rel="noopener">
+            <span class="ascii" aria-hidden="true">{"┌──────┐\n│ ▟██▙ │\n│ ▜██▛ │\n└──────┘"}</span>
+            <span>{p.name}<br /><small>→ browse models</small></span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section id="streaming">
+      <h2 class="ps" data-prompt={prompt}>ls ~/streaming</h2>
+      <div class="grid">
+        {streaming.map((p) => <ProjectCard project={p} />)}
+      </div>
+    </section>
+
+    <section id="lab">
+      <h2 class="ps" data-prompt={prompt}>ls -la ~/lab/old-components</h2>
+      <p class="note">Older experiments. Mostly unmaintained, still fun to poke at.</p>
+      <ul class="ls">
+        <li class="dotfile" aria-hidden="true">.white-rabbit</li>
+        <li class="dotfile" aria-hidden="true">.hangar/</li>
+        {oldComponents.map((c) => (
+          <li><a href={c.url} rel="noopener">{c.name}</a> <span class="cmt"># {c.note}</span></li>
+        ))}
+      </ul>
+    </section>
+
+    <Deprecated />
+
+    <section id="socials">
+      <h2 class="ps" data-prompt={prompt}>cat ~/.contact</h2>
+      <p class="socials">
+        {socials.map((s, i) => <>{i > 0 && " · "}<a href={s.url} rel="me noopener">{s.name}</a></>)}
+      </p>
+    </section>
+
+    <footer>
+      <span>vic10us · built in a garage, probably</span>
+      <span>uptime: <span id="up">0s</span></span>
+    </footer>
+  </main>
+
+  <Shell />
+</Base>
+
+<script>
+  import "@vic10us/glass-button";
+  import "../scripts/page";
+</script>
+
+<style>
+  nav.top {
+    position: sticky; top: 0; z-index: 5;
+    background: rgba(7, 9, 10, 0.92); backdrop-filter: blur(4px);
+    display: flex; gap: 6px 20px; flex-wrap: wrap;
+    padding: 12px 20px; border-bottom: 1px dashed var(--line);
+    max-width: 1000px; margin: 0 auto; font-size: 13px;
+  }
+  nav.top a { color: var(--fg); text-decoration: none; }
+  nav.top a::before { content: "./"; color: var(--dim); }
+  nav.top a:hover { color: var(--hi); }
+  nav.top .host { margin-left: auto; color: var(--dim); }
+
+  .hero { padding-top: 28px; }
+  .boot { color: var(--dim); font: 12px/1.6 var(--mono); margin: 0; min-height: 60px; }
+  h1 { font-size: clamp(44px, 9vw, 72px); margin: 6px 0 0; color: var(--hi); text-shadow: var(--glow); letter-spacing: 0.04em; line-height: 1.1; }
+  .tag { font-size: 17px; margin: 6px 0 0; min-height: 1.6em; }
+  .intro { max-width: 640px; opacity: 0.88; }
+  .cur { display: inline-block; width: 0.6em; height: 1.05em; background: var(--fg); vertical-align: -0.15em; }
+  .cur.blink { animation: bl 1.06s steps(1) infinite; }
+  .cur.off { opacity: 0; }
+  @keyframes bl { 50% { opacity: 0; } }
+
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 14px; }
+  .rows { display: flex; flex-direction: column; gap: 34px; }
+  .grid.two { grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr)); }
+
+
+  .profiles { display: flex; gap: 14px; flex-wrap: wrap; }
+  .profile {
+    display: flex; gap: 14px; align-items: center; text-decoration: none;
+    border: 1px solid var(--line); background: var(--panel); padding: 12px 18px; min-width: min(260px, 100%);
+  }
+  .profile:hover { border-color: var(--fg); }
+  .profile .ascii { white-space: pre; color: var(--dim); font-size: 12px; line-height: 1.15; }
+  .profile small { color: var(--dim); }
+
+  .ls { list-style: none; padding: 0; margin: 0; columns: 2 min(300px, 100%); font-size: 14px; }
+  .ls li { break-inside: avoid; padding: 2px 0; }
+  .ls a { color: var(--dir); text-decoration: none; }
+  .ls a:hover { text-decoration: underline; }
+  .ls .cmt { color: var(--faint); }
+  .ls .dotfile { color: var(--faint); }
+
+  .socials a { color: var(--hi); }
+  @media (max-width: 600px) {
+    nav.top { gap: 4px 14px; padding: 10px 16px; }
+    nav.top .host { display: none; }
+    .wrap { padding: 0 16px 120px; }
+  }
+  footer { margin-top: 80px; color: var(--dim); font-size: 12px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>

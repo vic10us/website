@@ -1,0 +1,102 @@
+---
+import type { Project } from "../data/site";
+interface Props { project: Project; pkg: string; }
+const { project: p, pkg } = Astro.props;
+const effects = ["fire", "water"];
+const statuses = ["healthy", "warning", "trouble", "unknown"];
+---
+<article class="showcase" data-slug={p.slug}>
+  <div class="text">
+    <h3><a href={p.url} rel="noopener">{p.name}</a></h3>
+    <p>{p.blurb}</p>
+    <button type="button" class="npm" data-copy={`npm i ${pkg}`} aria-label={`copy: npm i ${pkg}`}>
+      <span class="dollar">$</span> npm i {pkg} <span class="copied" aria-hidden="true">copy</span>
+    </button>
+    <div class="meta">
+      {p.tags.join(" · ")} · <a href={p.url} rel="noopener">source</a>{p.demo && <> · <a href={p.demo} rel="noopener">full playground</a></>}
+    </div>
+  </div>
+
+  <div class="play">
+    <div class="stage">
+      <glass-button class="gb" effect="fire" status="healthy" icon="none">Press me</glass-button>
+    </div>
+    <div class="controls" role="group" aria-label="glass-button options">
+      <div class="ctl">
+        <span>--effect</span>
+        {effects.map((e, i) => <button type="button" data-attr="effect" data-val={e} aria-pressed={i === 0 ? "true" : "false"}>{e}</button>)}
+      </div>
+      <div class="ctl">
+        <span>--status</span>
+        {statuses.map((s, i) => <button type="button" data-attr="status" data-val={s} aria-pressed={i === 0 ? "true" : "false"}>{s}</button>)}
+      </div>
+      <div class="ctl">
+        <span>--icon</span>
+        <button type="button" data-attr="icon" data-val="none" aria-pressed="true">none</button>
+        <button type="button" data-attr="icon" data-val="" aria-pressed="false">auto</button>
+      </div>
+    </div>
+  </div>
+</article>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".showcase").forEach((root) => {
+    const gb = root.querySelector<HTMLElement>(".gb")!;
+    root.querySelectorAll<HTMLButtonElement>("[data-attr]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const attr = btn.dataset.attr!, val = btn.dataset.val!;
+        if (val) gb.setAttribute(attr, val); else gb.removeAttribute(attr);
+        root.querySelectorAll<HTMLButtonElement>(`[data-attr="${attr}"]`).forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      });
+    });
+    const presses = ["Press me", "again", "harder", "ok, that's enough", "Press me"];
+    let n = 0;
+    gb.addEventListener("click", () => { n = (n + 1) % presses.length; gb.textContent = presses[n]; });
+    const npm = root.querySelector<HTMLButtonElement>(".npm")!;
+    npm.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(npm.dataset.copy!); } catch { /* clipboard blocked */ }
+      const c = npm.querySelector(".copied")!; c.textContent = "copied ✓";
+      setTimeout(() => { c.textContent = "copy"; }, 1500);
+    });
+  });
+</script>
+
+<style>
+  .showcase {
+    display: grid; grid-template-columns: 1fr 1.15fr; gap: 28px; align-items: center;
+    border: 1px solid var(--line); background: var(--panel); padding: 22px 24px;
+  }
+  .showcase:hover { border-color: var(--fg); box-shadow: 0 0 18px #2bff6a22; }
+  h3 { margin: 0; font-size: 18px; }
+  h3 a { color: var(--hi); text-decoration: none; }
+  h3 a::before { content: "▸ "; color: var(--dim); }
+  p { margin: 8px 0 14px; font-size: 14px; opacity: 0.88; }
+  .npm {
+    display: flex; gap: 8px; align-items: center; width: 100%; text-align: left; cursor: pointer;
+    font: 13px var(--mono); color: var(--hi); background: #050706; border: 1px solid var(--line); padding: 8px 10px; margin-bottom: 12px;
+  }
+  .npm:hover { border-color: var(--fg); }
+  .npm .dollar { color: var(--dim); }
+  .npm .copied { margin-left: auto; color: var(--dim); font-size: 11px; }
+  .meta { font-size: 12px; color: var(--dim); }
+  .meta a { color: var(--dim); }
+
+  .stage {
+    height: 190px; border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(80% 90% at 50% 120%, #08200f, #050706);
+  }
+  .gb { font-size: 17px; }
+  .controls { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+  .ctl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .ctl span { color: var(--dim); min-width: 68px; }
+  .ctl button {
+    font: 12px var(--mono); color: var(--fg); background: transparent; border: 1px solid var(--line); padding: 2px 8px; cursor: pointer;
+  }
+  .ctl button:hover { border-color: var(--fg); }
+  .ctl button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  @media (max-width: 760px) {
+    .showcase { grid-template-columns: 1fr; padding: 16px; }
+  }
+</style>
