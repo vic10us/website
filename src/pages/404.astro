@@ -1,0 +1,21 @@
+---
+import Base from "../layouts/Base.astro";
+import { prompt } from "../data/site";
+---
+<Base title="404 · vic10us">
+  <main class="wrap nf">
+    <p><span class="p">{prompt}</span> cd <span id="path"></span></p>
+    <p class="err">bash: cd: no such file or directory</p>
+    <p><span class="p">{prompt}</span> <a href="/">cd ~</a><span class="cur"></span></p>
+  </main>
+</Base>
+<script>
+  document.getElementById("path")!.textContent = location.pathname;
+</script>
+<style>
+  .nf { padding-top: 20vh; font-size: 16px; }
+  .p { color: var(--dim); }
+  .err { color: var(--err); }
+  .cur { display: inline-block; width: 0.6em; height: 1.05em; background: var(--fg); vertical-align: -0.15em; margin-left: 4px; animation: bl 1.06s steps(1) infinite; }
+  @keyframes bl { 50% { opacity: 0; } }
+</style>

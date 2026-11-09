@@ -1,5 +1,6 @@
-.DS_STORE
+.DS_Store
 node_modules
-.cache
 dist
-.parcel-cache
+.astro
+.superpowers/
+.wrangler
