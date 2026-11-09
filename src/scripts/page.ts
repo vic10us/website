@@ -169,7 +169,7 @@ const snark = (plain: string, mid: string, high: string) => (humor < 35 ? plain 
 const goTo = (id: string) => { closeShell(); document.getElementById(id)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" }); };
 
 const ghostHistory = ["ls -a ~/lab", "cat ~/lab/.white-rabbit", "whisper mode", "tars --humor 75", "roll out", "turbo boost", "cat .achievements"];
-const SECTIONS = ["work", "prints", "streaming", "lab", "socials"];
+const SECTIONS = ["work", "prints", "streaming", "lab", "deprecated", "socials"];
 const FILES: Record<string, () => void> = {
   ".white-rabbit": () => { print("follow me."); award("white-rabbit"); setTimeout(() => rain(), 700); },
   ".plan": () => print("1. build things\n2. help others build things\n3. ???\n4. print another filament holder"),
@@ -204,7 +204,7 @@ const cmds: Record<string, (a: string[]) => void> = {
   ls: (a) => {
     const all = a.some((x) => x.startsWith("-") && x.includes("a"));
     const dir = a.find((x) => !x.startsWith("-")) || "~";
-    if (/lab\/?$/.test(dir)) print("playground/  old-components/" + (all ? "  .white-rabbit  .hangar/" : ""));
+    if (/lab\/?$/.test(dir)) print("deprecated/  old-components/" + (all ? "  .white-rabbit  .hangar/" : ""));
     else if (/hangar/.test(dir)) cmds.cd(["hangar"]);
     else if (/projects/.test(dir)) print("glass-button/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
     else print("projects/  prints.log  streaming/  lab/" + (all ? "  .plan  .contact  .achievements" : ""));

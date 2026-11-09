@@ -50,3 +50,9 @@ body::after {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+section { margin-top: 64px; }
+.ps { color: var(--hi); font-size: 15px; font-weight: normal; margin: 0 0 14px; word-break: break-word; }
+.ps::before { content: attr(data-prompt) " "; color: var(--dim); }
+.note { margin: -6px 0 16px; opacity: 0.75; font-size: 13.5px; }
+@media (max-width: 600px) { .ps::before { content: "~$ "; } }
