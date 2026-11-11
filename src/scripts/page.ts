@@ -39,7 +39,7 @@ function toast(msg: string) {
   const t = document.createElement("div");
   t.textContent = msg;
   Object.assign(t.style, {
-    position: "fixed", left: "50%", top: "64px", transform: "translateX(-50%)", zIndex: "60",
+    position: "fixed", left: "50%", top: "64px", transform: "translateX(-50%)", zIndex: "80",
     background: "var(--panel)", border: "1px solid var(--fg)", color: "var(--hi)", padding: "6px 14px",
     font: "13px var(--mono)", boxShadow: "0 0 20px #2bff6a44", transition: "opacity .5s",
   });
@@ -65,18 +65,15 @@ boot();
 
 const typed = $("#typed");
 const words: string[] = JSON.parse(typed.dataset.words || "[]");
-let paused = false;
 if (!reduced) {
   let wi = 0, ci = 0, del = false;
   const tick = () => {
-    if (!paused) {
-      const w = words[wi];
-      typed.textContent = "> " + w.slice(0, ci);
-      if (!del && ci < w.length) { ci++; return setTimeout(tick, 90); }
-      if (!del) { del = true; return setTimeout(tick, 1500); }
-      if (ci > 0) { ci--; return setTimeout(tick, 40); }
-      del = false; wi = (wi + 1) % words.length;
-    }
+    const w = words[wi];
+    typed.textContent = "> " + w.slice(0, ci);
+    if (!del && ci < w.length) { ci++; return setTimeout(tick, 90); }
+    if (!del) { del = true; return setTimeout(tick, 1500); }
+    if (ci > 0) { ci--; return setTimeout(tick, 40); }
+    del = false; wi = (wi + 1) % words.length;
     setTimeout(tick, 300);
   };
   tick();
@@ -112,21 +109,40 @@ if (!reduced) { setTimeout(() => morse("STAY"), 15000); setInterval(() => morse(
 
 /* ---------- Matrix: idle wake-up ---------- */
 let idleT: number | undefined;
+let waking = false;
 const resetIdle = () => { clearTimeout(idleT); idleT = window.setTimeout(wake, 45000); };
 ["mousemove", "keydown", "scroll", "touchstart"].forEach((ev) => addEventListener(ev, resetIdle, { passive: true }));
+// a hidden tab doesn't count: wait until they're looking again
+document.addEventListener("visibilitychange", () => { if (!document.hidden) resetIdle(); });
 resetIdle();
 function wake() {
-  if (shell.classList.contains("open")) return;
-  paused = true;
-  const msg = "> wake up…";
-  let i = 0;
-  const s = () => {
-    typed.textContent = msg.slice(0, i++);
-    if (i <= msg.length) setTimeout(s, 150);
-    else setTimeout(() => { paused = false; }, 2500);
+  if (waking || document.hidden || shell.classList.contains("open")) return;
+  waking = true;
+  const lines = ["wake up…", "the lab has you…", "follow the white rabbit."];
+  const ov = document.createElement("div");
+  ov.className = "wake";
+  ov.setAttribute("role", "status");
+  const pre = document.createElement("pre");
+  ov.appendChild(pre);
+  document.body.appendChild(ov);
+  let li = 0, ci = 0, done = false;
+  const type = () => {
+    if (done || li >= lines.length) return;
+    if (ci <= lines[li].length) {
+      pre.textContent = lines.slice(0, li).join("\n") + (li ? "\n" : "") + lines[li].slice(0, ci++);
+      setTimeout(type, reduced ? 0 : 110);
+    } else { li++; ci = 0; setTimeout(type, reduced ? 0 : 1400); }
   };
-  s();
+  type();
   award("wake-up");
+  // stays until they come back; ignore the jitter of the very next instant
+  const dismiss = () => {
+    done = true;
+    ["mousemove", "keydown", "pointerdown", "touchstart", "scroll"].forEach((ev) => removeEventListener(ev, dismiss));
+    ov.classList.add("out");
+    setTimeout(() => { ov.remove(); waking = false; }, reduced ? 0 : 500);
+  };
+  setTimeout(() => ["mousemove", "keydown", "pointerdown", "touchstart", "scroll"].forEach((ev) => addEventListener(ev, dismiss, { passive: true })), 600);
 }
 
 /* ---------- shell ---------- */
