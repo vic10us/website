@@ -67,9 +67,11 @@ boot();
 
 const typed = $("#typed");
 const words: string[] = JSON.parse(typed.dataset.words || "[]");
+let signalling = false; // morse in progress: hold the typewriter
 if (!reduced) {
   let wi = 0, ci = 0, del = false;
   const tick = () => {
+    if (signalling) return setTimeout(tick, 300);
     const w = words[wi];
     typed.textContent = "> " + w.slice(0, ci);
     if (!del && ci < w.length) { ci++; return setTimeout(tick, 90); }
@@ -90,24 +92,42 @@ setInterval(() => {
 
 /* ---------- Interstellar: cursor blinks morse ---------- */
 const MORSE: Record<string, string> = { S: "...", T: "-", A: ".-", Y: "-.--" };
+const cursor = $("#cursor");
 function morse(word: string) {
-  const c = $("#cursor");
-  c.classList.remove("blink");
-  const seq: [boolean, number][] = [];
+  if (signalling) return;
+  signalling = true;
+  cursor.classList.remove("blink");
+  cursor.classList.add("morse");
+  const U = 300; // one morse unit
+  const seq: [boolean, number][] = [[false, 3 * U]];
   for (const ch of word) {
-    for (const s of MORSE[ch]) { seq.push([true, s === "." ? 180 : 540]); seq.push([false, 180]); }
-    seq.push([false, 540]);
+    for (const s of MORSE[ch]) { seq.push([true, s === "." ? U : 3 * U]); seq.push([false, U]); }
+    seq.push([false, 2 * U]);
   }
   let i = 0;
   const step = () => {
-    if (i >= seq.length) { c.classList.remove("off"); c.classList.add("blink"); return; }
+    if (i >= seq.length) { cursor.classList.remove("off", "morse"); cursor.classList.add("blink"); signalling = false; return; }
     const [on, ms] = seq[i++];
-    c.classList.toggle("off", !on);
+    cursor.classList.toggle("off", !on);
     setTimeout(step, ms);
   };
   step();
 }
-if (!reduced) { setTimeout(() => morse("STAY"), 15000); setInterval(() => morse("STAY"), 60000); }
+if (reduced) {
+  cursor.title = word2morse("STAY");
+} else {
+  // only signal while someone can actually see the cursor
+  let inView = false, last = 0;
+  new IntersectionObserver(([e]) => { inView = e.isIntersecting; }).observe(cursor);
+  const t0m = Date.now();
+  setInterval(() => {
+    const now = Date.now();
+    if (!inView || document.hidden || now - t0m < 10000 || now - last < 45000) return;
+    last = now;
+    morse("STAY");
+  }, 1000);
+}
+function word2morse(w: string) { return [...w].map((c) => MORSE[c]).join(" "); }
 
 /* ---------- Matrix: idle wake-up ---------- */
 let idleT: number | undefined;
@@ -185,7 +205,8 @@ const ghostHistory = ["ls -a ~/lab", "cat ~/lab/.white-rabbit", "whisper mode", 
 const SECTIONS = ["work", "components", "prints", "streaming", "lab", "deprecated", "socials"];
 const FILES: Record<string, () => void> = {
   ".white-rabbit": () => { print("follow me."); award("white-rabbit"); setTimeout(() => rain(), 700); },
-  ".plan": () => print("1. build things\n2. help others build things\n3. ???\n4. print another filament holder"),
+  ".plan": () => print("1. build things\n2. help others build things\n3. learn to speak Eridian\n4. pay attention to the cursor\n5. print another filament holder"),
+  ".rocky": () => { print("♪ ♫ ♪ ♫ ♪"); chord([523, 659, 784]); setTimeout(() => print("[translation]\n  ♪♫♪  amaze amaze amaze\n  ♫♪♫  fist my bump\n(he says you should try them.)", "dim"), 700); },
   ".achievements": () => {
     const all = Object.entries(EGGS);
     print(`found ${found.size} of ${all.length}\n` + all.map(([id, label]) => (found.has(id) ? `  [x] ${label}` : id === "doom" ? `  [ ] ??? (requires ${DOOM_GATE} keycards)` : "  [ ] ???")).join("\n"));
@@ -222,7 +243,7 @@ const cmds: Record<string, (a: string[]) => void> = {
     else if (/projects/.test(dir)) print("parley/  rock-atlas/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
     else if (/^(~\/)?components\/?$/.test(dir)) print("glass-button/");
     else if (/old-components/.test(dir)) print("terminal-text  paper-search-input  cc-form  stripe-form  progress-check-mark  profile-card");
-    else print("projects/  components/  prints.log  streaming/  lab/" + (all ? "  .plan  .contact  .achievements" : ""));
+    else print("projects/  components/  prints.log  streaming/  lab/" + (all ? "  .plan  .rocky  .contact  .achievements" : ""));
   },
   cat: (a) => {
     const f = (a[0] || "").replace(/^(~\/)?(lab\/)?/, "");
