@@ -37,20 +37,30 @@ function say(text: string) {
 
 const CLIP = "/media/roll-out.mp3"; // recorded by vic10us
 const CLIP_MS = 8400;
+const DRIVE_AT = 5000; // ms into the clip where he pulls away
 
 export function rollOut({ sound = true, reduced = false } = {}) {
   if (document.querySelector(".convoy")) return;
   const el = document.createElement("div");
   el.className = "convoy" + (reduced ? " parked" : "");
   el.innerHTML = `<div class="bubble">autobots, roll out!</div>${SPRITE}`;
-  // drive for as long as the clip plays
-  const ms = sound ? CLIP_MS : 5200;
-  el.style.setProperty("--convoy-dur", `${ms}ms`);
+  const driveMs = sound ? CLIP_MS - DRIVE_AT : 4600;
+  el.style.setProperty("--drive-dur", `${driveMs}ms`);
   document.body.appendChild(el);
-  if (sound) {
-    const clip = new Audio(CLIP);
-    clip.volume = 0.8;
-    clip.play().catch(() => { horn(); setTimeout(() => say("Autobots, roll out!"), 700); });
-  }
-  setTimeout(() => el.remove(), reduced ? Math.max(2600, sound ? CLIP_MS : 0) : ms);
+
+  let gone = false;
+  const done = () => { if (!gone) { gone = true; el.remove(); } };
+  const drive = (after: number) => setTimeout(() => {
+    if (reduced) return setTimeout(done, 600);
+    el.classList.add("go");
+    el.addEventListener("animationend", (e) => { if (e.animationName === "convoy") done(); });
+  }, after);
+  setTimeout(done, CLIP_MS + 3000); // safety net
+
+  if (!sound) return drive(1400);
+  const clip = new Audio(CLIP);
+  clip.volume = 0.8;
+  // time the pull-away from when audio actually starts, not when we asked
+  clip.addEventListener("playing", () => drive(DRIVE_AT), { once: true });
+  clip.play().catch(() => { horn(); setTimeout(() => say("Autobots, roll out!"), 700); drive(2400); });
 }
