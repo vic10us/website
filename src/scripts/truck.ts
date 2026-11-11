@@ -38,7 +38,7 @@ function say(text: string) {
 const CLIP = "/media/roll-out.mp3"; // recorded by vic10us
 const CLIP_MS = 8400;
 const DRIVE_AT = 7000; // ms into the clip where he pulls away
-const DRIVE_MS = 3000; // how long the drive across takes
+const DRIVE_MS = 2000; // how long the drive across takes
 
 export function rollOut({ sound = true, reduced = false } = {}) {
   if (document.querySelector(".convoy")) return;
