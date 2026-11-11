@@ -2,8 +2,10 @@ This directory runs Chocolate Doom compiled to WebAssembly.
 
 Engine: Chocolate Doom, GNU GPL v2 — https://github.com/chocolate-doom/chocolate-doom
 Port:   cloudflare/doom-wasm, GNU GPL v2 — https://github.com/cloudflare/doom-wasm
-        built from commit 65e0d3a with updated Emscripten link flags
-        (see EMFLAGS in configure.ac; build with scripts/build.sh).
+        websockets-doom.js / websockets-doom.wasm / default.cfg are Cloudflare's
+        prebuilt release as served by https://silentspacemarine.com, unmodified.
+        Corresponding source: https://github.com/cloudflare/doom-wasm
 
 doom1.wad is the unmodified DOOM shareware episode (v1.9), (c) id Software,
 distributed under its original shareware terms.
+SHA-1 5b2e249b9c5133ec987b3ea77596381dc0d6bc1d

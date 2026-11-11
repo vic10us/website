@@ -16,7 +16,7 @@
 <div id="status">loading arsenal…</div>
 <script>
   // Chocolate Doom (GPL-2.0) via cloudflare/doom-wasm. See ./SOURCE.txt.
-  var status = document.getElementById("status");
+  var statusEl = document.getElementById("status");
   var canvas = document.getElementById("canvas");
   var Module = {
     noInitialRun: true,
@@ -26,15 +26,15 @@
       Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
     },
     onRuntimeInitialized: function () {
-      status.remove();
+      statusEl.remove();
       canvas.focus();
-      Module.callMain(["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg"]);
+      (Module.callMain || callMain)(["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg"]);
     },
     print: function (t) { console.log(t); },
     printErr: function (t) { console.warn(t); },
-    setStatus: function (t) { if (t && status.isConnected) status.textContent = t; },
+    setStatus: function (t) { if (t && statusEl.isConnected) statusEl.textContent = t; },
   };
-  window.onerror = function () { if (status.isConnected) status.textContent = "the demons won. (failed to load)"; };
+  window.onerror = function () { if (statusEl.isConnected) statusEl.textContent = "the demons won. (failed to load)"; };
   addEventListener("click", function () { canvas.focus(); });
 </script>
 <script src="websockets-doom.js"></script>

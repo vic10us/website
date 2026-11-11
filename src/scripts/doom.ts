@@ -8,7 +8,7 @@ export function launch() {
   ov.setAttribute("aria-label", "Doom");
   ov.innerHTML = `
     <div class="doom-bar"><span>idkfa · wasd move · space fire · e use · esc menu</span><button type="button">✕ quit to shell</button></div>
-    <iframe src="/doom/" title="Doom (shareware)" allow="fullscreen; autoplay"></iframe>`;
+    <iframe src="/doom/index.html" title="Doom (shareware)" allow="fullscreen; autoplay"></iframe>`;
   document.body.appendChild(ov);
   document.documentElement.style.overflow = "hidden";
   const frame = ov.querySelector("iframe")!;
