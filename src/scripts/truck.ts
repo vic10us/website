@@ -35,16 +35,22 @@ function say(text: string) {
   } catch { /* no speech */ }
 }
 
+const CLIP = "/media/roll-out.mp3"; // recorded by vic10us
+const CLIP_MS = 8400;
+
 export function rollOut({ sound = true, reduced = false } = {}) {
   if (document.querySelector(".convoy")) return;
   const el = document.createElement("div");
   el.className = "convoy" + (reduced ? " parked" : "");
   el.innerHTML = `<div class="bubble">autobots, roll out!</div>${SPRITE}`;
+  // drive for as long as the clip plays
+  const ms = sound ? CLIP_MS : 5200;
+  el.style.setProperty("--convoy-dur", `${ms}ms`);
   document.body.appendChild(el);
   if (sound) {
-    horn();
-    setTimeout(() => say("Autobots, roll out!"), 700);
+    const clip = new Audio(CLIP);
+    clip.volume = 0.8;
+    clip.play().catch(() => { horn(); setTimeout(() => say("Autobots, roll out!"), 700); });
   }
-  const ms = reduced ? 2600 : 5200;
-  setTimeout(() => el.remove(), ms);
+  setTimeout(() => el.remove(), reduced ? Math.max(2600, sound ? CLIP_MS : 0) : ms);
 }

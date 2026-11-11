@@ -75,13 +75,13 @@ section { margin-top: 64px; }
 .doom iframe { flex: 1; width: 100%; border: 0; background: #000; }
 
 /* roll out */
-.convoy { position: fixed; bottom: 14px; left: 0; z-index: 65; pointer-events: none; width: 260px; animation: convoy 5.2s cubic-bezier(.45, 0, .55, 1) forwards; }
+.convoy { position: fixed; bottom: 14px; left: 0; z-index: 65; pointer-events: none; width: 260px; animation: convoy var(--convoy-dur, 5.2s) cubic-bezier(.45, 0, .55, 1) forwards; }
 .convoy .sprite { display: block; width: 260px; height: auto; filter: drop-shadow(0 6px 6px rgba(0, 0, 0, .6)); }
 .convoy .credit { position: absolute; left: 0; right: 0; bottom: -12px; text-align: center; font-size: 10px; color: var(--dim); text-decoration: none; pointer-events: auto; }
 .convoy .bubble {
   position: absolute; bottom: 150px; right: 30px; white-space: nowrap;
   font: bold 15px var(--mono); color: #111; background: #f5f7fa; border: 2px solid #111; border-radius: 10px; padding: 6px 12px;
-  opacity: 0; animation: bubble 5.2s forwards;
+  opacity: 0; animation: bubble var(--convoy-dur, 5.2s) forwards;
 }
 .convoy .bubble::after { content: ""; position: absolute; right: 30px; bottom: -10px; border: 8px solid transparent; border-top-color: #111; border-bottom: 0; }
 .convoy.parked { left: 50%; transform: translateX(-50%); animation: none; }
