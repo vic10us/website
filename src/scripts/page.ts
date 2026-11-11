@@ -67,9 +67,11 @@ boot();
 
 const typed = $("#typed");
 const words: string[] = JSON.parse(typed.dataset.words || "[]");
+let signalling = false; // morse in progress: hold the typewriter
 if (!reduced) {
   let wi = 0, ci = 0, del = false;
   const tick = () => {
+    if (signalling) return setTimeout(tick, 300);
     const w = words[wi];
     typed.textContent = "> " + w.slice(0, ci);
     if (!del && ci < w.length) { ci++; return setTimeout(tick, 90); }
@@ -90,24 +92,53 @@ setInterval(() => {
 
 /* ---------- Interstellar: cursor blinks morse ---------- */
 const MORSE: Record<string, string> = { S: "...", T: "-", A: ".-", Y: "-.--" };
+const cursor = $("#cursor");
 function morse(word: string) {
-  const c = $("#cursor");
-  c.classList.remove("blink");
-  const seq: [boolean, number][] = [];
+  if (signalling) return;
+  signalling = true;
+  cursor.classList.remove("blink");
+  cursor.classList.add("morse");
+  // the tagline spells out each symbol as the cursor blinks it
+  typed.textContent = "> ";
+  typed.classList.add("morse-text");
+  const U = 300; // one morse unit
+  const seq: [string, number][] = [["", 3 * U]];
   for (const ch of word) {
-    for (const s of MORSE[ch]) { seq.push([true, s === "." ? 180 : 540]); seq.push([false, 180]); }
-    seq.push([false, 540]);
+    for (const s of MORSE[ch]) { seq.push([s, s === "." ? U : 3 * U]); seq.push(["", U]); }
+    seq.push([" ", 2 * U]);
   }
   let i = 0;
   const step = () => {
-    if (i >= seq.length) { c.classList.remove("off"); c.classList.add("blink"); return; }
-    const [on, ms] = seq[i++];
-    c.classList.toggle("off", !on);
+    if (i >= seq.length) {
+      cursor.classList.remove("off", "morse");
+      cursor.classList.add("blink");
+      // let it linger before the typewriter takes the line back
+      setTimeout(() => { typed.classList.remove("morse-text"); signalling = false; }, 2500);
+      return;
+    }
+    const [sym, ms] = seq[i++];
+    const on = sym === "." || sym === "-";
+    cursor.classList.toggle("off", !on);
+    if (sym) typed.textContent += sym === " " ? "  " : sym;
     setTimeout(step, ms);
   };
   step();
 }
-if (!reduced) { setTimeout(() => morse("STAY"), 15000); setInterval(() => morse("STAY"), 60000); }
+if (reduced) {
+  cursor.title = word2morse("STAY");
+} else {
+  // only signal while someone can actually see the cursor
+  let inView = false, last = 0;
+  new IntersectionObserver(([e]) => { inView = e.isIntersecting; }).observe(cursor);
+  const t0m = Date.now();
+  setInterval(() => {
+    const now = Date.now();
+    if (!inView || document.hidden || now - t0m < 10000 || now - last < 45000) return;
+    last = now;
+    morse("STAY");
+  }, 1000);
+}
+function word2morse(w: string) { return [...w].map((c) => MORSE[c]).join(" "); }
 
 /* ---------- Matrix: idle wake-up ---------- */
 let idleT: number | undefined;
@@ -185,7 +216,8 @@ const ghostHistory = ["ls -a ~/lab", "cat ~/lab/.white-rabbit", "whisper mode", 
 const SECTIONS = ["work", "components", "prints", "streaming", "lab", "deprecated", "socials"];
 const FILES: Record<string, () => void> = {
   ".white-rabbit": () => { print("follow me."); award("white-rabbit"); setTimeout(() => rain(), 700); },
-  ".plan": () => print("1. build things\n2. help others build things\n3. ???\n4. print another filament holder"),
+  ".plan": () => print("1. build things\n2. help others build things\n3. learn to speak Eridian\n4. pay attention to the cursor\n5. print another filament holder"),
+  ".rocky": () => { print("♪ ♫ ♪ ♫ ♪"); chord([523, 659, 784]); setTimeout(() => print("[translation]\n  ♪♫♪  amaze amaze amaze\n  ♫♪♫  fist my bump\n(he says you should try them.)", "dim"), 700); },
   ".achievements": () => {
     const all = Object.entries(EGGS);
     print(`found ${found.size} of ${all.length}\n` + all.map(([id, label]) => (found.has(id) ? `  [x] ${label}` : id === "doom" ? `  [ ] ??? (requires ${DOOM_GATE} keycards)` : "  [ ] ???")).join("\n"));
@@ -222,7 +254,7 @@ const cmds: Record<string, (a: string[]) => void> = {
     else if (/projects/.test(dir)) print("parley/  rock-atlas/  amass-conductor/  QiDiBoxRFID/  stealthburner-cr10/");
     else if (/^(~\/)?components\/?$/.test(dir)) print("glass-button/");
     else if (/old-components/.test(dir)) print("terminal-text  paper-search-input  cc-form  stripe-form  progress-check-mark  profile-card");
-    else print("projects/  components/  prints.log  streaming/  lab/" + (all ? "  .plan  .contact  .achievements" : ""));
+    else print("projects/  components/  prints.log  streaming/  lab/" + (all ? "  .plan  .rocky  .contact  .achievements" : ""));
   },
   cat: (a) => {
     const f = (a[0] || "").replace(/^(~\/)?(lab\/)?/, "");
@@ -276,6 +308,7 @@ const cmds: Record<string, (a: string[]) => void> = {
     award("doom");
     setTimeout(() => { closeShell(); import("./doom").then((m) => m.launch()); }, 600);
   },
+  credits: () => print("optimus sprite ........ poneley.com (with permission)\ndoom ................... id Software shareware · chocolate-doom / cloudflare doom-wasm (GPL-2.0)\neverything else ........ vic10us", "dim"),
   echo: (a) => print(a.join(" ")),
   date: () => print(new Date().toString()),
   uname: () => print("vic10us-os 4.2.0 lab-eridani x86_64 GNU/Garage"),
@@ -303,12 +336,12 @@ const phrases: Record<string, () => void> = {
     award("roll-out");
     setTimeout(() => {
       closeShell();
-      const g = $("#cards");
-      const cs = [...g.children] as HTMLElement[];
-      cs.forEach((c, i) => { c.style.transform = `rotateY(90deg) translateY(${i % 2 ? 30 : -30}px)`; c.style.opacity = "0.2"; });
-      setTimeout(() => { cs.reverse().forEach((c) => g.appendChild(c)); cs.forEach((c) => { c.style.transform = ""; c.style.opacity = ""; }); }, 700);
+      import("./truck").then((m) => m.rollOut({ sound: !whisper, reduced }));
     }, 300);
   },
+  "autobots roll out": () => phrases["roll out"](),
+  "autobots, roll out": () => phrases["roll out"](),
+  "autobots, roll out!": () => phrases["roll out"](),
   "fist my bump": () => { print("♪ ♫ ♪  (happy)"); chord([392, 494, 587]); setTimeout(() => chord([440, 554, 659]), 260); award("fist-my-bump"); },
 };
 
