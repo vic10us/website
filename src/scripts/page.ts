@@ -27,7 +27,9 @@ const EGGS: Record<string, string> = {
   konami: "+30 lives",
   energon: "read the source",
   xyzzy: "said the magic word",
+  doom: "full arsenal unlocked",
 };
+const DOOM_GATE = 10;
 const found = new Set<string>(JSON.parse(store.get("vic10us.eggs") || "[]"));
 function award(id: string) {
   if (!(id in EGGS) || found.has(id)) return;
@@ -186,7 +188,7 @@ const FILES: Record<string, () => void> = {
   ".plan": () => print("1. build things\n2. help others build things\n3. ???\n4. print another filament holder"),
   ".achievements": () => {
     const all = Object.entries(EGGS);
-    print(`found ${found.size} of ${all.length}\n` + all.map(([id, label]) => (found.has(id) ? `  [x] ${label}` : "  [ ] ???")).join("\n"));
+    print(`found ${found.size} of ${all.length}\n` + all.map(([id, label]) => (found.has(id) ? `  [x] ${label}` : id === "doom" ? `  [ ] ??? (requires ${DOOM_GATE} keycards)` : "  [ ] ???")).join("\n"));
   },
   ".energon": () => { print("cube integrity: 100%\nautobots would be proud.", "ok"); award("energon"); },
   ".contact": () => goTo("socials"),
@@ -265,6 +267,15 @@ const cmds: Record<string, (a: string[]) => void> = {
   },
   stay: () => { print("message received. staying put.", "ok"); award("stay"); },
   xyzzy: () => { print("Nothing happens.", "dim"); award("xyzzy"); },
+  iddqd: () => print("degreelessness mode on.\n(you were already invincible here.)", "dim"),
+  idkfa: () => {
+    const keys = [...found].filter((id) => id !== "doom").length;
+    if (keys < DOOM_GATE) return print(`idkfa: missing keycards. ${keys}/${DOOM_GATE} collected.\nfind more secrets and try again.`, "err");
+    if (matchMedia("(pointer: coarse)").matches && !matchMedia("(any-pointer: fine)").matches) return print("idkfa: this one needs a keyboard.", "err");
+    print("very happy ammo added.", "ok");
+    award("doom");
+    setTimeout(() => { closeShell(); import("./doom").then((m) => m.launch()); }, 600);
+  },
   echo: (a) => print(a.join(" ")),
   date: () => print(new Date().toString()),
   uname: () => print("vic10us-os 4.2.0 lab-eridani x86_64 GNU/Garage"),

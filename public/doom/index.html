@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>idkfa</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #7dffa1; font: 14px ui-monospace, Menlo, Consolas, monospace; overflow: hidden; }
+  #canvas { display: block; width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; background: #000; outline: none; }
+  #status { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; white-space: pre; text-align: center; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+<div id="status">loading arsenal…</div>
+<script>
+  // Chocolate Doom (GPL-2.0) via cloudflare/doom-wasm. See ./SOURCE.txt.
+  var status = document.getElementById("status");
+  var canvas = document.getElementById("canvas");
+  var Module = {
+    noInitialRun: true,
+    canvas: canvas,
+    preRun: function () {
+      Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
+      Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
+    },
+    onRuntimeInitialized: function () {
+      status.remove();
+      canvas.focus();
+      Module.callMain(["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg"]);
+    },
+    print: function (t) { console.log(t); },
+    printErr: function (t) { console.warn(t); },
+    setStatus: function (t) { if (t && status.isConnected) status.textContent = t; },
+  };
+  window.onerror = function () { if (status.isConnected) status.textContent = "the demons won. (failed to load)"; };
+  addEventListener("click", function () { canvas.focus(); });
+</script>
+<script src="websockets-doom.js"></script>
+</body>
+</html>
