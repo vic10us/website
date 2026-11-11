@@ -37,14 +37,15 @@ function say(text: string) {
 
 const CLIP = "/media/roll-out.mp3"; // recorded by vic10us
 const CLIP_MS = 8400;
-const DRIVE_AT = 5000; // ms into the clip where he pulls away
+const DRIVE_AT = 7000; // ms into the clip where he pulls away
+const DRIVE_MS = 3000; // how long the drive across takes
 
 export function rollOut({ sound = true, reduced = false } = {}) {
   if (document.querySelector(".convoy")) return;
   const el = document.createElement("div");
   el.className = "convoy" + (reduced ? " parked" : "");
   el.innerHTML = `<div class="bubble">autobots, roll out!</div>${SPRITE}`;
-  const driveMs = sound ? CLIP_MS - DRIVE_AT : 4600;
+  const driveMs = sound ? DRIVE_MS : 4600;
   el.style.setProperty("--drive-dur", `${driveMs}ms`);
   document.body.appendChild(el);
 
@@ -55,7 +56,7 @@ export function rollOut({ sound = true, reduced = false } = {}) {
     el.classList.add("go");
     el.addEventListener("animationend", (e) => { if (e.animationName === "convoy") done(); });
   }, after);
-  setTimeout(done, CLIP_MS + 3000); // safety net
+  setTimeout(done, Math.max(CLIP_MS, DRIVE_AT + DRIVE_MS) + 3000); // safety net
 
   if (!sound) return drive(1400);
   const clip = new Audio(CLIP);
