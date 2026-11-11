@@ -326,10 +326,6 @@ const phrases: Record<string, () => void> = {
     setTimeout(() => {
       closeShell();
       import("./truck").then((m) => m.rollOut({ sound: !whisper, reduced }));
-      const g = $("#cards");
-      const cs = [...g.children] as HTMLElement[];
-      cs.forEach((c, i) => { c.style.transform = `rotateY(90deg) translateY(${i % 2 ? 30 : -30}px)`; c.style.opacity = "0.2"; });
-      setTimeout(() => { cs.reverse().forEach((c) => g.appendChild(c)); cs.forEach((c) => { c.style.transform = ""; c.style.opacity = ""; }); }, 700);
     }, 300);
   },
   "autobots roll out": () => phrases["roll out"](),
