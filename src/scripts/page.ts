@@ -297,6 +297,7 @@ const cmds: Record<string, (a: string[]) => void> = {
     award("doom");
     setTimeout(() => { closeShell(); import("./doom").then((m) => m.launch()); }, 600);
   },
+  credits: () => print("optimus sprite ........ poneley.com (with permission)\ndoom ................... id Software shareware · chocolate-doom / cloudflare doom-wasm (GPL-2.0)\neverything else ........ vic10us", "dim"),
   echo: (a) => print(a.join(" ")),
   date: () => print(new Date().toString()),
   uname: () => print("vic10us-os 4.2.0 lab-eridani x86_64 GNU/Garage"),
