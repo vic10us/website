@@ -98,17 +98,28 @@ function morse(word: string) {
   signalling = true;
   cursor.classList.remove("blink");
   cursor.classList.add("morse");
+  // the tagline spells out each symbol as the cursor blinks it
+  typed.textContent = "> ";
+  typed.classList.add("morse-text");
   const U = 300; // one morse unit
-  const seq: [boolean, number][] = [[false, 3 * U]];
+  const seq: [string, number][] = [["", 3 * U]];
   for (const ch of word) {
-    for (const s of MORSE[ch]) { seq.push([true, s === "." ? U : 3 * U]); seq.push([false, U]); }
-    seq.push([false, 2 * U]);
+    for (const s of MORSE[ch]) { seq.push([s, s === "." ? U : 3 * U]); seq.push(["", U]); }
+    seq.push([" ", 2 * U]);
   }
   let i = 0;
   const step = () => {
-    if (i >= seq.length) { cursor.classList.remove("off", "morse"); cursor.classList.add("blink"); signalling = false; return; }
-    const [on, ms] = seq[i++];
+    if (i >= seq.length) {
+      cursor.classList.remove("off", "morse");
+      cursor.classList.add("blink");
+      // let it linger before the typewriter takes the line back
+      setTimeout(() => { typed.classList.remove("morse-text"); signalling = false; }, 2500);
+      return;
+    }
+    const [sym, ms] = seq[i++];
+    const on = sym === "." || sym === "-";
     cursor.classList.toggle("off", !on);
+    if (sym) typed.textContent += sym === " " ? "  " : sym;
     setTimeout(step, ms);
   };
   step();
