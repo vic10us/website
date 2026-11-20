@@ -1,27 +1,29 @@
 ---
 import type { Project } from "../data/site";
-interface Props { project: Project; pkg: string; }
-const { project: p, pkg } = Astro.props;
+import { ui, tag, type Locale } from "../i18n";
+interface Props { project: Project; pkg: string; locale: Locale; }
+const { project: p, pkg, locale } = Astro.props;
+const t = ui[locale];
 const effects = ["fire", "water"];
 const statuses = ["healthy", "warning", "trouble", "unknown"];
 ---
-<article class="showcase" data-slug={p.slug}>
+<article class="showcase" data-slug={p.slug} data-presses={JSON.stringify([...t.presses, t.presses[0]])} data-copy-label={t.copy} data-copied-label={t.copied}>
   <div class="text">
     <h3><a href={p.url} rel="noopener">{p.name}</a></h3>
-    <p>{p.blurb}</p>
-    <button type="button" class="npm" data-copy={`npm i ${pkg}`} aria-label={`copy: npm i ${pkg}`}>
-      <span class="dollar">$</span> npm i {pkg} <span class="copied" aria-hidden="true">copy</span>
+    <p>{p.blurb[locale]}</p>
+    <button type="button" class="npm" data-copy={`npm i ${pkg}`} aria-label={`${t.copyLabel}: npm i ${pkg}`}>
+      <span class="dollar">$</span> npm i {pkg} <span class="copied" aria-hidden="true">{t.copy}</span>
     </button>
     <div class="meta">
-      {p.tags.join(" · ")} · <a href={p.url} rel="noopener">source</a>{p.demo && <> · <a href={p.demo} rel="noopener">full playground</a></>}
+      {p.tags.map((x) => tag(x, locale)).join(" · ")} · <a href={p.url} rel="noopener">{t.source}</a>{p.demo && <> · <a href={p.demo} rel="noopener">{t.playground}</a></>}
     </div>
   </div>
 
   <div class="play">
     <div class="stage">
-      <glass-button class="gb" effect="fire" status="healthy" icon="none">Press me</glass-button>
+      <glass-button class="gb" effect="fire" status="healthy" icon="none">{t.presses[0]}</glass-button>
     </div>
-    <div class="controls" role="group" aria-label="glass-button options">
+    <div class="controls" role="group" aria-label={`glass-button ${t.options}`}>
       <div class="ctl">
         <span>--effect</span>
         {effects.map((e, i) => <button type="button" data-attr="effect" data-val={e} aria-pressed={i === 0 ? "true" : "false"}>{e}</button>)}
@@ -49,14 +51,14 @@ const statuses = ["healthy", "warning", "trouble", "unknown"];
         root.querySelectorAll<HTMLButtonElement>(`[data-attr="${attr}"]`).forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
       });
     });
-    const presses = ["Press me", "again", "harder", "ok, that's enough", "Press me"];
+    const presses: string[] = JSON.parse(root.dataset.presses || "[]");
     let n = 0;
     gb.addEventListener("click", () => { n = (n + 1) % presses.length; gb.textContent = presses[n]; });
     const npm = root.querySelector<HTMLButtonElement>(".npm")!;
     npm.addEventListener("click", async () => {
       try { await navigator.clipboard.writeText(npm.dataset.copy!); } catch { /* clipboard blocked */ }
-      const c = npm.querySelector(".copied")!; c.textContent = "copied ✓";
-      setTimeout(() => { c.textContent = "copy"; }, 1500);
+      const c = npm.querySelector(".copied")!; c.textContent = root.dataset.copiedLabel!;
+      setTimeout(() => { c.textContent = root.dataset.copyLabel!; }, 1500);
     });
   });
 </script>

@@ -1,6 +1,11 @@
 ---
 import { Image } from "astro:assets";
 import { prompt } from "../data/site";
+import { ui, type Locale } from "../i18n";
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = ui[locale];
+const st = t.status;
 import c1 from "../assets/clouds/cloud1.png";
 import c2 from "../assets/clouds/cloud2.png";
 import c3 from "../assets/clouds/cloud3.png";
@@ -16,11 +21,11 @@ const R = 52;
 const C = 2 * Math.PI * R;
 ---
 <section id="deprecated">
-  <h2 class="ps" data-prompt={prompt}>systemctl status legacy-demos</h2>
-  <pre class="status" aria-label="legacy demos status: failed, bitrot"><span class="red">●</span> legacy-demos.service - Component Playground (2022–2024)
-     Loaded: loaded (/home/vic10us/lab/deprecated; <span class="red">abandoned</span>)
-     Active: <span class="red">failed (Result: bitrot)</span> since forever
-    Process: still twitching. poke them anyway.</pre>
+  <h2 class="ps" data-prompt={prompt}><span class="sr-only">{t.sections.deprecated}: </span><span aria-hidden="true">systemctl status legacy-demos</span></h2>
+  <pre class="status" aria-label={st.label}><span class="red">●</span> legacy-demos.service - {st.desc}
+     Loaded: loaded (/home/vic10us/lab/deprecated; <span class="red">{st.abandoned}</span>)
+     Active: <span class="red">{st.failed}</span> {st.since}
+    Process: {st.process}</pre>
 
   <div class="demos">
     <figure class="demo hex" id="hex">
@@ -53,7 +58,7 @@ const C = 2 * Math.PI * R;
           </div>
         ))}
       </div>
-      <button type="button" id="randomize">randomize</button>
+      <button type="button" id="randomize">{t.randomize}</button>
       <figcaption>circular-progress.tsx <span>† 2023</span></figcaption>
     </figure>
   </div>

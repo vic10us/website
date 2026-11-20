@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /doom/
+
+Sitemap: https://vic10.us/sitemap.xml
 
 # nothing to see here. (press ` though.)

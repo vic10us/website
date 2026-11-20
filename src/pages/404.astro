@@ -2,15 +2,22 @@
 import Base from "../layouts/Base.astro";
 import { prompt } from "../data/site";
 ---
-<Base title="404 · vic10us">
+<Base title="404 · vic10us" noindex>
   <main class="wrap nf">
     <p><span class="p">{prompt}</span> cd <span id="path"></span></p>
     <p class="err">bash: cd: no such file or directory</p>
-    <p><span class="p">{prompt}</span> <a href="/">cd ~</a><span class="cur"></span></p>
+    <p><span class="p">{prompt}</span> <a href="/" id="home">cd ~</a><span class="cur"></span></p>
   </main>
 </Base>
 <script>
   document.getElementById("path")!.textContent = location.pathname;
+  // send lost visitors back to the home page in the language they were browsing
+  const l = location.pathname.split("/")[1];
+  if (l === "fr" || l === "es") {
+    document.documentElement.lang = l === "fr" ? "fr-CA" : "es";
+    document.getElementById("home")!.setAttribute("href", `/${l}/`);
+    document.querySelector(".err")!.textContent = l === "fr" ? "bash: cd: aucun fichier ou dossier de ce nom" : "bash: cd: no existe el archivo o el directorio";
+  }
 </script>
 <style>
   .nf { padding-top: 20vh; font-size: 16px; }

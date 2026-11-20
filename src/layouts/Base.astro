@@ -1,35 +1,74 @@
 ---
 import "../styles/global.css";
+import { locales, defaultLocale, htmlLang, ogLocale, home, ui, type Locale } from "../i18n";
+import { sameAs } from "../data/site";
 
 interface Props {
+  locale?: Locale;
   title?: string;
   description?: string;
+  /** emit hreflang alternates + structured data (the home pages) */
+  home?: boolean;
+  noindex?: boolean;
 }
-const {
-  title = "vic10us",
-  description = "Engineer, streamer, DIY-er. Projects, demos, 3D prints and the occasional rabbit hole.",
-} = Astro.props;
+const { locale = defaultLocale, home: isHome = false, noindex = false } = Astro.props;
+const t = ui[locale];
+const title = Astro.props.title ?? t.title;
+const description = Astro.props.description ?? t.description;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
+const abs = (l: Locale) => new URL(home(l), Astro.site).href;
+
+const jsonLd = isHome && {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  url: abs(locale),
+  inLanguage: htmlLang[locale],
+  name: title,
+  description,
+  mainEntity: {
+    "@type": "Person",
+    name: "vic10us",
+    url: abs(defaultLocale),
+    image: ogImage.href,
+    description,
+    sameAs,
+  },
+};
 ---
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang[locale]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {isHome && locales.map((l) => <link rel="alternate" hreflang={htmlLang[l]} href={abs(l)} />)}
+    {isHome && <link rel="alternate" hreflang="x-default" href={abs(defaultLocale)} />}
+    <link rel="sitemap" href="/sitemap.xml" />
     <meta name="theme-color" content="#07090a" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="vic10us" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={ogLocale[locale]} />
+    {isHome && locales.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={ogLocale[l]} />)}
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={t.ogAlt} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <!-- more than meets the eye. ~/lab/.energon -->
   </head>
   <body>

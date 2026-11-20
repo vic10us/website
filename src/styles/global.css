@@ -91,3 +91,12 @@ section { margin-top: 64px; }
 @keyframes convoy { from { transform: translateX(16px); } to { transform: translateX(calc(100vw + 40px)); } }
 @keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.9); } to { opacity: 1; transform: none; } }
 @keyframes fade { to { opacity: 0; } }
+
+/* language suggestion */
+.lang-hint {
+  max-width: 1000px; margin: 0 auto; padding: 6px 20px; font-size: 12.5px; color: var(--dim);
+  display: flex; gap: 10px; align-items: center; border-bottom: 1px dashed var(--line);
+}
+.lang-hint a { color: var(--hi); }
+.lang-hint button { margin-left: auto; background: none; border: 0; color: var(--dim); font: inherit; cursor: pointer; }
+.lang-hint button:hover { color: var(--fg); }
