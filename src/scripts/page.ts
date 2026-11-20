@@ -1,8 +1,12 @@
 import { host, user } from "../data/site";
+import { shellText, pageLocale } from "../i18n/shell";
+import { locales, home, langName, isLocale } from "../i18n";
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const PS = `${user}@${host}:~$`;
+const LOC = pageLocale();
+const T = shellText[LOC];
 
 /* ---------- storage (best effort) ---------- */
 const store = {
@@ -11,31 +15,14 @@ const store = {
 };
 
 /* ---------- easter egg registry ---------- */
-const EGGS: Record<string, string> = {
-  "white-rabbit": "followed the white rabbit",
-  "wake-up": "got a wake-up call",
-  stay: "decoded the cursor",
-  "turbo-boost": "hit turbo boost",
-  whisper: "engaged whisper mode",
-  hangar: "found the hangar",
-  "roll-out": "rolled out",
-  tars: "tuned TARS",
-  "fist-my-bump": "fist my bump",
-  amaze: "amaze amaze amaze",
-  sudo: "tried sudo",
-  "rm-rf": "deleted everything (sort of)",
-  konami: "+30 lives",
-  energon: "read the source",
-  xyzzy: "said the magic word",
-  doom: "full arsenal unlocked",
-};
+const EGGS: Record<string, string> = T.eggs;
 const DOOM_GATE = 10;
 const found = new Set<string>(JSON.parse(store.get("vic10us.eggs") || "[]"));
 function award(id: string) {
   if (!(id in EGGS) || found.has(id)) return;
   found.add(id);
   store.set("vic10us.eggs", JSON.stringify([...found]));
-  toast(`★ achievement: ${EGGS[id]} (${found.size}/${Object.keys(EGGS).length})`);
+  toast(T.achievement(EGGS[id], found.size, Object.keys(EGGS).length));
 }
 function toast(msg: string) {
   const t = document.createElement("div");
@@ -51,7 +38,7 @@ function toast(msg: string) {
 
 /* ---------- console hello for the curious ---------- */
 console.log(
-  "%cvic10us%c\nlooking under the hood? the backtick key opens a door.\npsst… adventurers know the magic word.",
+  "%cvic10us%c\n" + T.hello,
   "color:#7dffa1;font:bold 20px monospace;text-shadow:0 0 6px #2bff6a",
   "color:#4a8a5d;font:12px monospace",
 );
@@ -151,7 +138,7 @@ resetIdle();
 function wake() {
   if (waking || document.hidden || shell.classList.contains("open")) return;
   waking = true;
-  const lines = ["wake up…", "the lab has you…", "follow the white rabbit."];
+  const lines = T.wake;
   const ov = document.createElement("div");
   ov.className = "wake";
   ov.setAttribute("role", "status");
@@ -200,7 +187,7 @@ function openShell() {
   shell.setAttribute("aria-hidden", "false");
   setTimeout(() => inp.focus(), 60);
   if (!out.childElementCount) {
-    print("vic10us-os 4.2.0 (tty1)\nlast login: from somewhere on the internet\ntype 'help' to get started.", "dim");
+    print(T.banner, "dim");
   }
 }
 function closeShell() {
@@ -215,30 +202,21 @@ const goTo = (id: string) => { closeShell(); document.getElementById(id)?.scroll
 const ghostHistory = ["ls -a ~/lab", "cat ~/lab/.white-rabbit", "whisper mode", "tars --humor 75", "roll out", "turbo boost", "cat .achievements"];
 const SECTIONS = ["work", "components", "prints", "streaming", "lab", "deprecated", "socials"];
 const FILES: Record<string, () => void> = {
-  ".white-rabbit": () => { print("follow me."); award("white-rabbit"); setTimeout(() => rain(), 700); },
-  ".plan": () => print("1. build things\n2. help others build things\n3. learn to speak Eridian\n4. pay attention to the cursor\n5. print another filament holder"),
-  ".rocky": () => { print("♪ ♫ ♪ ♫ ♪"); chord([523, 659, 784]); setTimeout(() => print("[translation]\n  ♪♫♪  amaze amaze amaze\n  ♫♪♫  fist my bump\n(he says you should try them.)", "dim"), 700); },
+  ".white-rabbit": () => { print(T.rabbit); award("white-rabbit"); setTimeout(() => rain(), 700); },
+  ".plan": () => print(T.plan),
+  ".rocky": () => { print("♪ ♫ ♪ ♫ ♪"); chord([523, 659, 784]); setTimeout(() => print(T.rockyTranslation, "dim"), 700); },
   ".achievements": () => {
     const all = Object.entries(EGGS);
-    print(`found ${found.size} of ${all.length}\n` + all.map(([id, label]) => (found.has(id) ? `  [x] ${label}` : id === "doom" ? `  [ ] ??? (requires ${DOOM_GATE} keycards)` : "  [ ] ???")).join("\n"));
+    print(T.found(found.size, all.length) + "\n" + all.map(([id, label]) => (found.has(id) ? `  [x] ${label}` : id === "doom" ? `  [ ] ${T.doomSlot(DOOM_GATE)}` : "  [ ] ???")).join("\n"));
   },
-  ".energon": () => { print("cube integrity: 100%\nautobots would be proud.", "ok"); award("energon"); },
+  ".energon": () => { print(T.energon, "ok"); award("energon"); },
   ".contact": () => goTo("socials"),
   "prints.log": () => goTo("prints"),
 };
 
 const cmds: Record<string, (a: string[]) => void> = {
-  help: () => print(
-    "available commands:\n" +
-    "  whoami            who runs this place\n" +
-    "  ls [-a] [dir]     list things\n" +
-    "  cat <file>        read a file\n" +
-    "  cd <dir>          go somewhere\n" +
-    "  goto <section>    " + SECTIONS.join(" | ") + "\n" +
-    "  clear | exit\n" +
-    "\n(there's also `history`, if you're the nosy type.)",
-  ),
-  whoami: () => print(snark("engineer · streamer · diy-er", "engineer · streamer · diy-er · professional button-presser", "a carbon-based unit with too many side projects")),
+  help: () => print(T.help([...document.querySelectorAll("nav.top > a")].map((a) => a.textContent).join(" | "))),
+  whoami: () => print(snark(...T.whoami)),
   history: () => {
     const rows = [...ghostHistory, ...hist].map((c, i) => `  ${String(i + 1).padStart(3)}  ${c}`);
     print(rows.join("\n"));
@@ -259,24 +237,28 @@ const cmds: Record<string, (a: string[]) => void> = {
   cat: (a) => {
     const f = (a[0] || "").replace(/^(~\/)?(lab\/)?/, "");
     if (FILES[f]) FILES[f]();
-    else print(`cat: ${a[0] || "?"}: no such file`, "err");
+    else print(T.noFile(a[0] || "?"), "err");
   },
   cd: (a) => {
-    const d = (a[0] || "").replace(/^(~\/)?(lab\/)?\.?/, "").replace(/\/$/, "");
-    if (d === "hangar") { print("ACCESS DENIED.\nclearance: Archangel only.", "err"); award("hangar"); }
+    const raw = (a[0] || "").replace(/^(~\/)?(lab\/)?\.?/, "").replace(/\/$/, "");
+    const d = T.aliases[raw.toLowerCase()] ?? raw;
+    if (d === "hangar") { print(T.hangar, "err"); award("hangar"); }
     else if (SECTIONS.includes(d) || d === "projects") goTo(d === "projects" ? "work" : d);
-    else print("you are already where you need to be.", "dim");
+    else print(T.alreadyHere, "dim");
   },
-  goto: (a) => (SECTIONS.includes(a[0]) ? goTo(a[0]) : print("goto: unknown section. try: " + SECTIONS.join(", "), "err")),
+  goto: (a) => {
+    const id = T.aliases[(a[0] || "").toLowerCase()] ?? a[0];
+    SECTIONS.includes(id) ? goTo(id) : print(T.unknownSection([...document.querySelectorAll("nav.top > a")].map((a) => a.textContent).join(", ")), "err");
+  },
   open: (a) => {
     const el = a[0] && document.querySelector(`[data-slug="${a[0].toLowerCase()}"] a`) as HTMLAnchorElement | null;
-    if (el) { print(`opening ${a[0]}…`); window.open(el.href, "_blank", "noopener"); }
-    else print("open: which project? try `ls ~/projects`", "err");
+    if (el) { print(T.opening(a[0])); window.open(el.href, "_blank", "noopener"); }
+    else print(T.openWhich, "err");
   },
-  sudo: () => { print(snark("permission denied.", "nice try.", "nice try. this incident will be reported."), "err"); award("sudo"); },
+  sudo: () => { print(snark(...T.sudo), "err"); award("sudo"); },
   rm: (a) => {
-    if (!a.join(" ").includes("-rf")) return print("rm: careful with that.", "dim");
-    print("deleting / …", "err");
+    if (!a.join(" ").includes("-rf")) return print(T.rmCareful, "dim");
+    print(T.deleting, "err");
     award("rm-rf");
     setTimeout(() => {
       closeShell();
@@ -291,24 +273,31 @@ const cmds: Record<string, (a: string[]) => void> = {
   tars: (a) => {
     const i = a.indexOf("--humor");
     const v = parseInt(a[i + 1]);
-    if (i < 0 || isNaN(v)) return print(`humor setting: ${humor}%`);
+    if (i < 0 || isNaN(v)) return print(T.humorIs(humor));
     humor = Math.max(0, Math.min(100, v));
     store.set("vic10us.humor", String(humor));
-    print(humor >= 90 ? `humor set to ${humor}%. self-destruct in T-minus 10… 9… kidding.` : `humor set to ${humor}%.`);
+    print(humor >= 90 ? T.humorHigh(humor) : T.humorSet(humor));
     award("tars");
   },
-  stay: () => { print("message received. staying put.", "ok"); award("stay"); },
-  xyzzy: () => { print("Nothing happens.", "dim"); award("xyzzy"); },
-  iddqd: () => print("degreelessness mode on.\n(you were already invincible here.)", "dim"),
+  stay: () => { print(T.stay, "ok"); award("stay"); },
+  xyzzy: () => { print(T.xyzzy, "dim"); award("xyzzy"); },
+  iddqd: () => print(T.iddqd, "dim"),
   idkfa: () => {
     const keys = [...found].filter((id) => id !== "doom").length;
-    if (keys < DOOM_GATE) return print(`idkfa: missing keycards. ${keys}/${DOOM_GATE} collected.\nfind more secrets and try again.`, "err");
-    if (matchMedia("(pointer: coarse)").matches && !matchMedia("(any-pointer: fine)").matches) return print("idkfa: this one needs a keyboard.", "err");
-    print("very happy ammo added.", "ok");
+    if (keys < DOOM_GATE) return print(T.idkfaLocked(keys, DOOM_GATE), "err");
+    if (matchMedia("(pointer: coarse)").matches && !matchMedia("(any-pointer: fine)").matches) return print(T.idkfaKeyboard, "err");
+    print(T.idkfaOk, "ok");
     award("doom");
-    setTimeout(() => { closeShell(); import("./doom").then((m) => m.launch()); }, 600);
+    setTimeout(() => { closeShell(); import("./doom").then((m) => m.launch({ bar: T.doomBar, quit: T.doomQuit })); }, 600);
   },
-  credits: () => print("optimus sprite ........ poneley.com (with permission)\ndoom ................... id Software shareware · chocolate-doom / cloudflare doom-wasm (GPL-2.0)\neverything else ........ vic10us", "dim"),
+  credits: () => print(T.credits, "dim"),
+  lang: (a) => {
+    const l = (a[0] || "").toLowerCase();
+    if (!isLocale(l)) return print(T.langUsage(locales.join("|")), "err");
+    if (l === LOC) return print(T.alreadyHere, "dim");
+    print(T.langSwitch(langName[l]), "ok");
+    setTimeout(() => { location.href = home(l); }, 500);
+  },
   echo: (a) => print(a.join(" ")),
   date: () => print(new Date().toString()),
   uname: () => print("vic10us-os 4.2.0 lab-eridani x86_64 GNU/Garage"),
@@ -317,11 +306,11 @@ const phrases: Record<string, () => void> = {
   "whisper mode": () => {
     whisper = !whisper;
     document.body.classList.toggle("whisper", whisper);
-    print(whisper ? "whisper mode: engaged." : "whisper mode: off.");
+    print(whisper ? T.whisperOn : T.whisperOff);
     award("whisper");
   },
   "turbo boost": () => {
-    print("TURBO BOOST.");
+    print(T.turbo);
     award("turbo-boost");
     setTimeout(() => {
       closeShell();
@@ -332,7 +321,7 @@ const phrases: Record<string, () => void> = {
     }, 300);
   },
   "roll out": () => {
-    print("transforming…");
+    print(T.transforming);
     award("roll-out");
     setTimeout(() => {
       closeShell();
@@ -342,7 +331,7 @@ const phrases: Record<string, () => void> = {
   "autobots roll out": () => phrases["roll out"](),
   "autobots, roll out": () => phrases["roll out"](),
   "autobots, roll out!": () => phrases["roll out"](),
-  "fist my bump": () => { print("♪ ♫ ♪  (happy)"); chord([392, 494, 587]); setTimeout(() => chord([440, 554, 659]), 260); award("fist-my-bump"); },
+  "fist my bump": () => { print(T.happy); chord([392, 494, 587]); setTimeout(() => chord([440, 554, 659]), 260); award("fist-my-bump"); },
 };
 
 let ac: AudioContext | undefined;
@@ -371,7 +360,7 @@ async function run(line: string) {
   const [c, ...a] = raw.split(/\s+/);
   const fn = cmds[c.toLowerCase()];
   if (fn) fn(a);
-  else print(snark(`${c}: command not found`, `${c}: command not found. try 'help'.`, `${c}? never heard of it. and I've heard of everything.`), "err");
+  else print(snark(...T.notFound(c)), "err");
 }
 
 $("#inrow").addEventListener("submit", (e) => { e.preventDefault(); run(inp.value); inp.value = ""; hi = -1; });
@@ -391,7 +380,7 @@ const K = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRi
 let kp = 0;
 document.addEventListener("keydown", (e) => {
   kp = e.key === K[kp] ? kp + 1 : e.key === K[0] ? 1 : 0;
-  if (kp === K.length) { kp = 0; openShell(); print("+30 lives. you'll need them.", "ok"); award("konami"); }
+  if (kp === K.length) { kp = 0; openShell(); print(T.konami, "ok"); award("konami"); }
 });
 
 /* ---------- Matrix rain ---------- */

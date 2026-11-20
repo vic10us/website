@@ -1,15 +1,17 @@
 ---
 import type { Project } from "../data/site";
-interface Props { project: Project; }
-const { project: p } = Astro.props;
+import { ui, tag, type Locale } from "../i18n";
+interface Props { project: Project; locale: Locale; }
+const { project: p, locale } = Astro.props;
+const t = ui[locale];
 ---
 <article class="card" data-slug={p.slug}>
   <h3><a href={p.url} rel="noopener">{p.name}</a></h3>
-  <p>{p.blurb}</p>
+  <p>{p.blurb[locale]}</p>
   <slot />
   <div class="meta">
-    {p.tags.join(" · ")}{p.stars ? ` · ★${p.stars}` : ""}
-    {p.demo && <> · <a href={p.demo} rel="noopener">demo</a></>}
+    {p.tags.map((x) => tag(x, locale)).join(" · ")}{p.stars ? ` · ★${p.stars}` : ""}
+    {p.demo && <> · <a href={p.demo} rel="noopener">{t.demo}</a></>}
   </div>
 </article>
 

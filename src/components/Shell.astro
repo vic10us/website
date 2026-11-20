@@ -1,10 +1,14 @@
 ---
 import { prompt, user, host } from "../data/site";
+import { ui, type Locale } from "../i18n";
+interface Props { locale: Locale; }
+const { locale } = Astro.props;
+const t = ui[locale];
 ---
-<button id="shell-hint" type="button" aria-controls="shell">press <kbd>`</kbd> for a shell</button>
+<button id="shell-hint" type="button" aria-controls="shell">{t.shellHint[0]} <kbd>`</kbd> {t.shellHint[1]}</button>
 
-<div id="shell" role="dialog" aria-label="terminal" aria-hidden="true">
-  <div class="bar"><span>tty1 · {user}@{host}</span><button type="button" id="shell-close" aria-label="close terminal">esc ×</button></div>
+<div id="shell" role="dialog" aria-label={t.shellLabel} aria-hidden="true">
+  <div class="bar"><span>tty1 · {user}@{host}</span><button type="button" id="shell-close" aria-label={t.shellClose}>esc ×</button></div>
   <div id="scan" aria-hidden="true"></div>
   <div id="out" role="log" aria-live="polite"></div>
   <form id="inrow" autocomplete="off">
